@@ -1,8 +1,8 @@
 module.exports = {
   //网站标题（博客名称）
-  "title": "红尘散仙",
+  "title": "Ego",
   //加载页面的提示语句
-  "description": "男儿不展凌云志，空负天生八尺躯",
+  "description": "尽人事， 听天命！",
   "dest": "dist",
   "head": [
     /* [
@@ -82,7 +82,7 @@ module.exports = {
     "search": true,
     "searchMaxSuggestions": 10,
     "lastUpdated": "Last Updated",
-    "author": "红尘散仙",
+    "author": "Ego",
     "authorAvatar": "/avatar-top.png",
     "record": "你的备案号 ", //icp备案
     "startYear": "2022",
