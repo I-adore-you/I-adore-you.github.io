@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/ego/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/ego/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="spring," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="有道云链接：https:&#x2F;&#x2F;note.youdao.com&#x2F;s&#x2F;aEZ6dwS1​ 本节课会把Spring中核心知识点都给大家进行串讲，让大家对Spring的底层有一个整体的大致了解，比如：  Bean的生命周期底层原理 依赖注入底层原理 初始化底层原理 推断构造方法底层原理 AOP底层原理 Spring事务底层原理  但都只是大致流程，后续会针对每个流程详细深入的讲解并分析源码实现。 先来看看入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring的整体理解">
+<meta property="og:url" content="http://example.com/2022/09/25/01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="Ego">
+<meta property="og:description" content="有道云链接：https:&#x2F;&#x2F;note.youdao.com&#x2F;s&#x2F;aEZ6dwS1​ 本节课会把Spring中核心知识点都给大家进行串讲，让大家对Spring的底层有一个整体的大致了解，比如：  Bean的生命周期底层原理 依赖注入底层原理 初始化底层原理 推断构造方法底层原理 AOP底层原理 Spring事务底层原理  但都只是大致流程，后续会针对每个流程详细深入的讲解并分析源码实现。 先来看看入">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.assets/image-20230813163724920.png">
+<meta property="og:image" content="http://example.com/01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.assets/image-20230817090853368.png">
+<meta property="og:image" content="http://example.com/01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.assets/image-20230817090936830.png">
+<meta property="article:published_time" content="2022-09-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-24T15:00:35.855Z">
+<meta property="article:author" content="Ego">
+<meta property="article:tag" content="spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.assets/image-20230813163724920.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2022/09/25/01-Spring底层核心原理解析/"/>
+
+
+
+
+
+  <title>spring的整体理解 | Ego</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ego</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">天道不一定酬所有的勤，但是天道一定酬勤！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/25/01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ego">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">spring的整体理解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-09-25T00:00:00+08:00">
+                2022-09-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>有道云链接：<a href="">https://note.youdao.com/s/aEZ6dwS1</a><br><strong>​</strong></p>
+<p><strong>本节课会把Spring中核心知识点都给大家进行串讲，让大家对Spring的底层有一个整体的大致了解</strong>，比如：</p>
+<ol>
+<li>Bean的生命周期底层原理</li>
+<li>依赖注入底层原理</li>
+<li>初始化底层原理</li>
+<li>推断构造方法底层原理</li>
+<li>AOP底层原理</li>
+<li>Spring事务底层原理</li>
+</ol>
+<p>但都只是大致流程，<strong>后续会针对每个流程详细深入的讲解并分析源码实现</strong>。</p>
+<p>先来看看入门使用Spring的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ClassPathXmlApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassPathXmlApplicationContext</span>(<span class="string">&quot;spring.xml&quot;</span>);</span><br><span class="line"><span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> (UserService) context.getBean(<span class="string">&quot;userService&quot;</span>);</span><br><span class="line">userService.test();</span><br></pre></td></tr></table></figure>
+
+
+<p>对于这三行代码应该，大部分同学应该都是比较熟悉，这是学习Spring的hello world。可是，这三行代码底层都做了什么，比如：</p>
+<ol>
+<li>第一行代码，会构造一个ClassPathXmlApplicationContext对象，ClassPathXmlApplicationContext该如何理解，调用该构造方法除开会实例化得到一个对象，还会做哪些事情？</li>
+<li>第二行代码，会调用ClassPathXmlApplicationContext的getBean方法，会得到一个UserService对象，getBean()是如何实现的？返回的UserService对象和我们自己直接new的UserService对象有区别吗？</li>
+<li>第三行代码，就是简单的调用UserService的test()方法，不难理解。</li>
+</ol>
+<p>光看这三行代码，其实<strong>并不能体现出来Spring的强大之处</strong>，也不能理解为什么需要ClassPathXmlApplicationContext和getBean()方法，随着课程的深入将会改变你此时的观念，而对于上面的这些疑问，也会随着课程深入逐步得到解决。对于这三行代码，你现在可以认为：如果你要用Spring，你就得这么写。就像你要用Mybatis，你就得写各种Mapper接口。<br>​</p>
+<p>但是用ClassPathXmlApplicationContext其实已经过时了，在新版的Spring MVC和Spring Boot的底层主要用的都是<strong>AnnotationConfigApplicationContext</strong>，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">AnnotationConfigApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(AppConfig.class);</span><br><span class="line"><span class="comment">//ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(&quot;spring.xml&quot;);</span></span><br><span class="line"><span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> (UserService) context.getBean(<span class="string">&quot;userService&quot;</span>);</span><br><span class="line">userService.test();</span><br></pre></td></tr></table></figure>
+<p>可以看到AnnotationConfigApplicationContext的用法和ClassPathXmlApplicationContext是非常类似的，只不过需要传入的是一个class，而不是一个xml文件。</p>
+<p>而AppConfig.class和spring.xml一样，表示Spring的配置，比如可以指定扫描路径，可以直接定义Bean，比如：<br>​</p>
+<p>spring.xml中的内容为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;context:component-scan base-<span class="keyword">package</span>=<span class="string">&quot;com.zhouyu&quot;</span>/&gt;</span><br><span class="line">&lt;bean id=<span class="string">&quot;userService&quot;</span> class=<span class="string">&quot;com.zhouyu.service.UserService&quot;</span>/&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p>AppConfig中的内容为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(&quot;com.zhouyu&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="keyword">public</span> UserService <span class="title function_">userService</span><span class="params">()</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">UserService</span>();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>所以spring.xml和AppConfig.class本质上是一样的。<br>​</p>
+<p>目前，我们基本很少直接使用上面这种方式来用Spring，而是使用Spring MVC，或者Spring Boot，但是它们都是基于上面这种方式的，都需要在内部去创建一个ApplicationContext的，只不过：</p>
+<ol>
+<li>Spring MVC创建的是<strong>XmlWebApplicationContext</strong>，和<strong>ClassPathXmlApplicationContext</strong>类似，都是基于XML配置的</li>
+<li>Spring Boot创建的是<strong>AnnotationConfigApplicationContext</strong></li>
+</ol>
+<p>因为AnnotationConfigApplicationContext是比较重要的，并且AnnotationConfigApplicationContext和ClassPathXmlApplicationContext大部分底层都是共同的，后续课程我们会着重将AnnotationConfigApplicationContext的底层实现，对于ClassPathXmlApplicationContext，同学们可以在课程结束后作为作业，业余时间看看相关源码即可。</p>
+<h2 id="Spring中是如何创建一个对象？"><a href="#Spring中是如何创建一个对象？" class="headerlink" title="Spring中是如何创建一个对象？"></a>Spring中是如何创建一个对象？</h2><p>其实不管是AnnotationConfigApplicationContext还是ClassPathXmlApplicationContext，目前，我们都可以简单的将它们理解为就是用来创建Java对象的，比如调用getBean()就会去创建对象（此处不严谨，getBean可能也不会去创建对象，后续课程详解）。<br>​</p>
+<p>在Java语言中，肯定是根据某个类来创建一个对象的。我们在看一下实例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">AnnotationConfigApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationConfigApplicationContext</span>(AppConfig.class);</span><br><span class="line"><span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> (UserService) context.getBean(<span class="string">&quot;userService&quot;</span>);</span><br><span class="line">userService.test();</span><br></pre></td></tr></table></figure>
+
+
+<p>当我们调用context.getBean(“userService”)时，就会去创建一个对象，但是getBean方法内部怎么知道”userService”对应的是UserService类呢？<br>​</p>
+<p>所以，我们就可以分析出来，在调用AnnotationConfigApplicationContext的构造方法时，也就是第一行代码，会去做一些事情：</p>
+<ol>
+<li>解析AppConfig.class，得到扫描路径</li>
+<li>遍历扫描路径下的所有Java类，如果发现某个类上存在@Component、@Service等注解，那么Spring就把这个类记录下来，存在一个Map中，比如Map&lt;String, Class&gt;。（<strong>实际上，Spring源码中确实存在类似的这么一个Map，叫做BeanDefinitionMap，后续课程会讲到</strong>）</li>
+<li>Spring会根据某个规则生成当前类对应的beanName，作为key存入Map，当前类作为value</li>
+</ol>
+<p>这样，但调用context.getBean(“userService”)时，就可以根据”userService”找到UserService类，从而就可以去创建对象了。<br>​</p>
+<h2 id="Bean的创建过程"><a href="#Bean的创建过程" class="headerlink" title="Bean的创建过程"></a>Bean的创建过程</h2><p>那么Spring到底是如何来创建一个Bean的呢，这个就是Bean创建的生命周期，大致过程如下</p>
+<ol>
+<li>利用该类的构造方法来实例化得到一个对象（但是如何一个类中有多个构造方法，Spring则会进行选择，这个叫做<strong>推断构造方法</strong>）</li>
+<li>得到一个对象后，Spring会判断该对象中是否存在被@Autowired注解了的属性，把这些属性找出来并由Spring进行赋值（<strong>依赖注入</strong>）</li>
+<li>依赖注入后，Spring会判断该对象是否实现了BeanNameAware接口、BeanClassLoaderAware接口、BeanFactoryAware接口，如果实现了，就表示当前对象必须实现该接口中所定义的setBeanName()、setBeanClassLoader()、setBeanFactory()方法，那Spring就会调用这些方法并传入相应的参数（<strong>Aware回调</strong>）</li>
+<li>Aware回调后，Spring会判断该对象中是否存在某个方法被@PostConstruct注解了，如果存在，Spring会调用当前对象的此方法（<strong>初始化前</strong>）</li>
+<li>紧接着，Spring会判断该对象是否实现了InitializingBean接口，如果实现了，就表示当前对象必须实现该接口中的afterPropertiesSet()方法，那Spring就会调用当前对象中的afterPropertiesSet()方法（<strong>初始化</strong>）</li>
+<li>最后，Spring会判断当前对象需不需要进行AOP，如果不需要那么Bean就创建完了，如果需要进行AOP，则会进行动态代理并生成一个代理对象做为Bean（<strong>初始化后</strong>）</li>
+</ol>
+<p>通过最后一步，我们可以发现，当Spring根据UserService类来创建一个Bean时：</p>
+<ol>
+<li>如果不用进行AOP，那么Bean就是UserService类的构造方法所得到的对象。</li>
+<li>如果需要进行AOP，那么Bean就是UserService的代理类所实例化得到的对象，而不是UserService本身所得到的对象。</li>
+</ol>
+<p>Bean对象创建出来后：</p>
+<ol>
+<li>如果当前Bean是单例Bean，那么会把该Bean对象存入一个Map&lt;String, Object&gt;，Map的key为beanName，value为Bean对象。这样下次getBean时就可以直接从Map中拿到对应的Bean对象了。（实际上，在Spring源码中，这个Map就是<strong>单例池</strong>）</li>
+<li>如果当前Bean是原型Bean，那么后续没有其他动作，不会存入一个Map，下次getBean时会再次执行上述创建过程，得到一个新的Bean对象。</li>
+</ol>
+<h2 id="推断构造方法"><a href="#推断构造方法" class="headerlink" title="推断构造方法"></a>推断构造方法</h2><p>Spring在基于某个类生成Bean的过程中，需要利用该类的构造方法来实例化得到一个对象，但是<strong>如果一个类存在多个构造方法，Spring会使用哪个呢？</strong><br><strong>​</strong></p>
+<p>Spring的判断逻辑如下：</p>
+<ol>
+<li>如果一个类只存在一个构造方法，不管该构造方法是无参构造方法，还是有参构造方法，Spring都会用这个构造方法</li>
+<li>如果一个类存在多个构造方法<ol>
+<li>这些构造方法中，存在一个无参的构造方法，那么Spring就会用这个无参的构造方法</li>
+<li>这些构造方法中，不存在一个无参的构造方法，那么Spring就会<strong>报错</strong></li>
+</ol>
+</li>
+</ol>
+<p>Spring的设计思想是这样的：</p>
+<ol>
+<li>如果一个类只有一个构造方法，那么没得选择，只能用这个构造方法</li>
+<li>如果一个类存在多个构造方法，Spring不知道如何选择，就会看是否有无参的构造方法，因为无参构造方法本身表示了一种默认的意义</li>
+<li>不过如果某个构造方法上加了@Autowired注解，那就表示程序员告诉Spring就用这个加了注解的方法，那Spring就会用这个加了@Autowired注解构造方法了</li>
+</ol>
+<p>需要重视的是，如果Spring选择了一个有参的构造方法，Spring在调用这个有参构造方法时，需要传入参数，那这个参数是怎么来的呢？<br>​</p>
+<p>Spring会根据入参的类型和入参的名字去Spring中找Bean对象（以单例Bean为例，Spring会从单例池那个Map中去找）：</p>
+<ol>
+<li>先根据入参类型找，如果只找到一个，那就直接用来作为入参</li>
+<li>如果根据类型找到多个，则再根据入参名字来确定唯一一个</li>
+<li>最终如果没有找到，则会报错，无法创建当前Bean对象</li>
+</ol>
+<p>确定用哪个构造方法，确定入参的Bean对象，这个过程就叫做<strong>推断构造方法</strong>。<br><strong>​</strong></p>
+<h2 id="AOP大致流程"><a href="#AOP大致流程" class="headerlink" title="AOP大致流程"></a>AOP大致流程</h2><p>AOP就是进行动态代理，在创建一个Bean的过程中，Spring在最后一步会去判断当前正在创建的这个Bean是不是需要进行AOP，如果需要则会进行动态代理。<br>​</p>
+<p>如何判断当前Bean对象需不需要进行AOP:</p>
+<ol>
+<li>找出所有的切面Bean</li>
+<li>遍历切面中的每个方法，看是否写了@Before、@After等注解</li>
+<li>如果写了，则判断所对应的Pointcut是否和当前Bean对象的类是否匹配</li>
+<li>如果匹配则表示当前Bean对象有匹配的的Pointcut，表示需要进行AOP</li>
+</ol>
+<p>利用cglib进行AOP的大致流程：</p>
+<ol>
+<li>生成代理类UserServiceProxy，代理类继承UserService</li>
+<li>代理类中重写了父类的方法，比如UserService中的test()方法</li>
+<li>代理类中还会有一个target属性，该属性的值为被代理对象（也就是通过UserService类推断构造方法实例化出来的对象，进行了依赖注入、初始化等步骤的对象）</li>
+<li>代理类中的test()方法被执行时的逻辑如下：<ol>
+<li>执行切面逻辑（@Before）</li>
+<li>调用target.test()</li>
+</ol>
+</li>
+</ol>
+<p>当我们从Spring容器得到UserService的Bean对象时，拿到的就是UserServiceProxy所生成的对象，也就是代理对象。<br>​</p>
+<p>UserService代理对象.test()—&gt;执行切面逻辑—&gt;target.test()，注意target对象不是代理对象，而是被代理对象。</p>
+<hr>
+<p><img src="/../01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.assets/image-20230813163724920.png" alt="image-20230813163724920"></p>
+<p><strong>要主要上面中的一点：  这里面有几个 UserService 对象？</strong> </p>
+<p>3 个：  一个 是 被代理对象 userService ①, 一个是 代理对象 userServiceProxy对②象， 但是这个 ②代理对象生成的过程中， 会先生成 其父类 UserService 的实例对象③， 所以 ① 和 ③ 是都存在的， 但是 完全一样， ①的 属性是经过 spring 进行 依赖注入的过程的，</p>
+<p>而③ 就是 普通的 由于 创建子类对象而创建的 UserService 对象，这个对象里面的其他 bean 是没有值的！</p>
+<p>在Java中，当创建子类的实例对象时，会先创建父类的实例对象。这是因为子类继承了父类的属性和方法，需要先创建父类的实例来初始化这些继承的成员。 在你的代码中，当创建 s 类的实例对象时，会先创建 F 类的实例对象。这意味着会先执行 F 类的构造函数，然后再执行 s 类的构造函数。父类的构造函数会在子类的构造函数之前被调用。 所以，在执行 new s() 时，会先创建 F 类的实例对象，然后再创建 s 类的实例对象。</p>
+<p>切面生成的代理对象和 事务生成的代理对象， 是不太一样的，</p>
+<p>周瑜说， 这两个  代理对象的生成 给都是 依赖， 初始化后的流程（aop） ， 但是 aop 的实现细节会有些不太一样的 </p>
+<h4 id="另外的一个点需要注意一下"><a href="#另外的一个点需要注意一下" class="headerlink" title="另外的一个点需要注意一下:"></a>另外的一个点需要注意一下:</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">在Spring AOP中,当一个目标类上有多个切面时,Spring会为该目标类生成一个代理对象。这个代理对象会包含所有切面的通知逻辑。</span><br><span class="line"></span><br><span class="line">也就是说,无论有多少个切面对同一个目标类进行拦截,Spring始终会生成一个代理对象。这个代理对象内部会织入所有切面的通知逻辑,并在目标方法执行时依次执行这些通知方法。</span><br><span class="line"></span><br><span class="line">举个例子,假设有两个切面AspectA和AspectB,都对目标类Target的方法进行拦截:</span><br><span class="line"></span><br><span class="line">AspectA:</span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AspectA</span> &#123;</span><br><span class="line">    <span class="meta">@Before(&quot;execution(* Target.method())&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">before</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">AspectB:</span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AspectB</span> &#123;</span><br><span class="line">    <span class="meta">@AfterReturning(&quot;execution(* Target.method())&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterReturning</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">对于Target类,Spring会生成一个代理对象,这个代理对象内部包含AspectA的before()通知方法和AspectB的afterReturning()通知方法。当调用代理对象的method()方法时,会依次执行:</span><br><span class="line"></span><br><span class="line"><span class="number">1.</span> before()方法</span><br><span class="line"><span class="number">2.</span> target.method()方法</span><br><span class="line"><span class="number">3.</span> afterReturning()方法</span><br><span class="line"></span><br><span class="line">所以,可以看出,无论有多少个切面,Spring会为每个目标类生成一个代理对象,这个代理对象内部织入所有切面的通知逻辑。</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="拦截器执行的顺序的本质"><a href="#拦截器执行的顺序的本质" class="headerlink" title="拦截器执行的顺序的本质"></a>拦截器执行的顺序的本质</h4><p><img src="/../01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.assets/image-20230817090853368.png" alt="image-20230817090853368"></p>
+<p>仔细看它们的执行的顺序</p>
+<p><img src="/../01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90.assets/image-20230817090936830.png" alt="image-20230817090936830"></p>
+<p>​	</p>
+<h2 id="Spring事务"><a href="#Spring事务" class="headerlink" title="Spring事务"></a>Spring事务</h2><p>当我们在某个方法上加了@Transactional注解后，就表示该方法在调用时会开启Spring事务，而这个方法所在的类所对应的Bean对象会是该类的代理对象。<br>​</p>
+<p>Spring事务的代理对象执行某个方法时的步骤：</p>
+<ol>
+<li>判断当前执行的方法是否存在@Transactional注解</li>
+<li>如果存在，则利用事务管理器（TransactionMananger）新建一个数据库连接</li>
+<li>修改数据库连接的autocommit为false</li>
+<li>执行target.test()，执行程序员所写的业务逻辑代码，也就是执行sql</li>
+<li>执行完了之后如果没有出现异常，则提交，否则回滚</li>
+</ol>
+<p>Spring事务是否会失效的判断标准：<strong>某个加了@Transactional注解的方法被调用时，要判断到底是不是直接被代理对象调用的，如果是则事务会生效，如果不是则失效。</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/06/19/java8-common-new-features/" rel="next" title="Java8">
+                <i class="fa fa-chevron-left"></i> Java8
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/08/24/%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring%E4%B8%AD%E6%98%AF%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">Spring中是如何创建一个对象？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bean%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">Bean的创建过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E6%96%AD%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">推断构造方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOP%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">AOP大致流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%A6%E5%A4%96%E7%9A%84%E4%B8%80%E4%B8%AA%E7%82%B9%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E4%B8%80%E4%B8%8B"><span class="nav-number">4.0.1.</span> <span class="nav-text">另外的一个点需要注意一下:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8%E6%89%A7%E8%A1%8C%E7%9A%84%E9%A1%BA%E5%BA%8F%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">4.0.2.</span> <span class="nav-text">拦截器执行的顺序的本质</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring%E4%BA%8B%E5%8A%A1"><span class="nav-number">5.</span> <span class="nav-text">Spring事务</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2021 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ego</span>
+
+  
+</div>
+
+
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/ego/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
