@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/ego/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/ego/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java知识," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="java基础知识的大致整体复习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java基础">
+<meta property="og:url" content="http://example.com/2023/01/25/Java%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="Ego">
+<meta property="og:description" content="java基础知识的大致整体复习">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825111642719.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825111653355.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825111707203.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825111845240.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825112009605.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825112021305.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825111903373.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825112110364.png">
+<meta property="og:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825112127877.png">
+<meta property="article:published_time" content="2023-01-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-25T03:21:46.409Z">
+<meta property="article:author" content="Ego">
+<meta property="article:tag" content="Java知识">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/Java%E5%9F%BA%E7%A1%80.assets/image-20230825111642719.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2023/01/25/Java基础/"/>
+
+
+
+
+
+  <title>java基础 | Ego</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ego</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">天道不一定酬所有的勤，但是天道一定酬勤！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/25/Java%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ego">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">java基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-01-25T00:00:00+08:00">
+                2023-01-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  java基础知识的大致整体复习
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Java基础"><a href="#Java基础" class="headerlink" title="Java基础"></a>Java基础</h1><h3 id="一-Java基础"><a href="#一-Java基础" class="headerlink" title="一: Java基础"></a>一: Java基础</h3><p>1: 简单说说Java中对象如何拷贝?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">一、浅拷贝clone（）</span><br><span class="line"></span><br><span class="line">如果对象中的所有数据域都是数值或者基本类型，使用clone（）即可满足需求，如：</span><br><span class="line"></span><br><span class="line">Person p = new Person();</span><br><span class="line"></span><br><span class="line">Person p1 = p.clone();</span><br><span class="line"></span><br><span class="line">这样p和p1分别指向不同的对象。</span><br><span class="line"></span><br><span class="line">二、深度拷贝</span><br><span class="line"></span><br><span class="line">如果在对象中包含子对象的引用，拷贝的结果是使得两个域引用同一个对象，默认的拷贝是浅拷贝，没有拷贝包含在对象中的内部对象。</span><br><span class="line"></span><br><span class="line">如果子对象是不可变的，如String，这没有什么问题；如果对象是可变的，必须重新定义clone方法；</span><br><span class="line"></span><br><span class="line">三、序列化可克隆（深拷贝）</span><br><span class="line"></span><br><span class="line">四、BeanUtils.copyProperties()</span><br></pre></td></tr></table></figure>
+
+<p>2: 伪代码快速实现一下深拷贝    </p>
+<p>3: Java是什么类型的语言?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">一、你可以说它是编译型的：因为所有的Java代码都是要编译的，.java不经过编译就什么用都没有。 </span><br><span class="line">二、你可以说它是解释型的：因为java代码编译后不能直接运行，它是解释运行在JVM上的，所以它是解释运行的，那也就算是解释的了。 </span><br><span class="line">三、但是，现在的JVM为了效率，都有一些JIT优化。它又会把.class的二进制代码编译为本地的代码直接运行，所以，又是编译的。</span><br><span class="line"></span><br><span class="line">定义： </span><br><span class="line">（1）编译型语言：把做好的源程序全部编译成二进制代码的可运行程序。然后，可直接运行这个程序。 </span><br><span class="line">（2）解释型语言：把做好的源程序翻译一句，然后执行一句，直至结束！ </span><br><span class="line">区别： </span><br><span class="line">（1）编译型语言，执行速度快、效率高；依靠编译器、跨平台性差些。 </span><br><span class="line">（2）解释型语言，执行速度慢、效率低；依靠解释器、跨平台性好。</span><br><span class="line"></span><br><span class="line">java是解释型的语言，因为虽然java也需要编译，编译成.class文件，但是并不是机器可以识别的语言，而是字节码，最终还是需要 jvm的解释，才能在各个平台执行，这同时也是java跨平台的原因。所以可是说java即是编译型的，也是解释型，但是假如非要归类的话，从概念上的定义，恐怕java应该归到解释型的语言中。 </span><br><span class="line">附： </span><br><span class="line">编译型的语言包括：C、C++、Delphi、Pascal、Fortran </span><br><span class="line">解释型的语言包括：Java、Basic、javascript、python</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825111642719.png" alt="image-20230825111642719"></p>
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825111653355.png" alt="image-20230825111653355"></p>
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825111707203.png" alt="image-20230825111707203"></p>
+<p>GraalVM 即时编译   graal  aot  jit c1 c2</p>
+<p>4: 什么是Object,有哪些常用的方法,怎么创建对象?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1、使用new关键字；</span><br><span class="line">2、使用Class类的newInstance方法，可调用无参的构造函数创建对象；</span><br><span class="line">3、使用Constructor类的newInstance方法；</span><br><span class="line">4、使用clone方法；</span><br><span class="line">5、使用反序列化。</span><br></pre></td></tr></table></figure>
+
+<p>5: 多态,面向接口编程?聊聊你的认知</p>
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825111845240.png" alt="image-20230825111845240"></p>
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825112009605.png" alt="image-20230825112009605"></p>
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825112021305.png" alt="image-20230825112021305"></p>
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825111903373.png" alt="image-20230825111903373"></p>
+<p>6: 什么是内部类,说说你对他的理解以及实战场景</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">使用内部类最吸引人的原因是：每个内部类都能独立地继承一个（接口的）实现，所以无论外围类是否已经继承了某个（接口的）实现，对于内部类都没有影响。</span><br><span class="line"></span><br><span class="line">在我们程序设计中有时候会存在一些使用接口很难解决的问题，这个时候我们可以利用内部类提供的、可以继承多个具体的或者抽象的类的能力来解决这些程序设计问题。可以这样说，接口只是解决了部分问题，而内部类使得多重继承的解决方案变得更加完整。</span><br><span class="line"></span><br><span class="line">      1、内部类可以用多个实例，每个实例都有自己的状态信息，并且与其他外围对象的信息相互独立。</span><br><span class="line"></span><br><span class="line">      2、在单个外围类中，可以让多个内部类以不同的方式实现同一个接口，或者继承同一个类。</span><br><span class="line"></span><br><span class="line">      3、创建内部类对象的时刻并不依赖于外围类对象的创建。</span><br><span class="line"></span><br><span class="line">      4、内部类并没有令人迷惑的“is-a”关系，他就是一个独立的实体。</span><br><span class="line"></span><br><span class="line">      5、内部类提供了更好的封装，除了该外围类，其他类都不能访问。</span><br><span class="line"></span><br><span class="line">成员内部类</span><br><span class="line">   第一：成员内部类中不能存在任何static的变量和方法；</span><br><span class="line">   第二：成员内部类是依附于外围类的，所以只有先创建了外围类才能够创建内部类。</span><br><span class="line"></span><br><span class="line">局部内部类</span><br><span class="line"></span><br><span class="line">匿名内部类</span><br><span class="line">  1、 匿名内部类是没有访问修饰符的。</span><br><span class="line">  2、 new 匿名内部类，这个类首先是要存在的。如果我们将那个InnerClass接口注释掉，就会出现编译出错。</span><br><span class="line">  3、 注意getInnerClass()方法的形参，第一个形参是用final修饰的，而第二个却没有。同时我们也发现第二个形参在匿名内部类中没有使用过，所以当所在方法的形参需要被匿名内部类使用，那么这个形参就必须为final。</span><br><span class="line">  4、 匿名内部类是没有构造方法的。因为它连名字都没有何来构造方法。</span><br><span class="line"></span><br><span class="line">静态内部类</span><br><span class="line">  1、 它的创建是不需要依赖于外围类的。</span><br><span class="line">  2、 它不能使用任何外围类的非static成员变量和方法。</span><br><span class="line"></span><br><span class="line">https://www.cnblogs.com/chanchan/p/8402411.html 局部内部类只能使用final 局部变量</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>7: 说说 static 和 final 在Java中的意义</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">使用final的意义：</span><br><span class="line"></span><br><span class="line">为方法上锁，防止任何继承类改变它的本来含义和实现。设计程序时，若希望一个方法的行为在继承期间保持不变，而且不可被覆盖或改写，就可以采取这种做法。</span><br><span class="line">提高程序执行的效率，将一个方法设成final后，编译器就可以把对那个方法的所有调用都置入嵌入调用里（内嵌机制）。</span><br><span class="line"></span><br><span class="line">static总结</span><br><span class="line">static修饰成员函数:该成员函数不能使用this对象</span><br><span class="line">static不能修饰构造函数</span><br><span class="line">static不能修饰函数参数</span><br><span class="line">static不能修饰局部成员变量</span><br><span class="line">static修饰成员字段</span><br><span class="line">当类被虚拟机加载时，首先按照字段声明的先后顺序对static成员字段进行初始化</span><br><span class="line">static修饰语句块</span><br><span class="line">当类被虚拟机加载时，按照声明顺序先后初始化static成员字段和static语句块</span><br><span class="line">static所修饰的方法和字段是只属于类，所有对象共享。</span><br><span class="line">在static所修饰的函数和语句块中不能使用非static成员字段。</span><br><span class="line">在Java不能直接定义全局变量，是通过static来实现的</span><br><span class="line">在Java中没有const，不能直接定义常量，通过static final来实现</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>8: Java中的基本数据类型占多少字节,不同的操作系统一样吗?</p>
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825112110364.png" alt="image-20230825112110364"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">非基本类型BigDecimal引用的对象占用的字节数是可变的，具体大小依赖于你输入的数据量，要求的精度和选择的舍入方法。如果你问的是类型为BigDecimal的引用变量占用的字节数，那只有一个指针变量的大小，目前为4。</span><br></pre></td></tr></table></figure>
+
+<p>9: String,StringBuffer,StringBuild;以及String常用的方法</p>
+<p>10: int和Integer有什么关联?为什么需要Integer?装箱拆箱</p>
+<p>11: 什么是序列化,反序列化.说说运用场景</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.cnblogs.com/binarylei/p/10987540.html</span><br></pre></td></tr></table></figure>
+
+<p>12: 数组有length（）方法吗?</p>
+<p>13: 构造器是否可以被重写</p>
+<p>14: char是否可以存储一个汉字</p>
+<p>15: 集合原理系列</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">ArrayList原理</span><br><span class="line">LinkedList原理</span><br><span class="line">为什么舍弃Vector</span><br><span class="line"></span><br><span class="line">HashSet/TreeSet</span><br><span class="line"></span><br><span class="line">HashMap/TreeMap 原理</span><br><span class="line">为什么舍弃HashTable</span><br><span class="line"></span><br><span class="line">Queue  </span><br><span class="line"></span><br><span class="line">　　add      增加一个元索                     如果队列已满，则抛出一个IIIegaISlabEepeplian异常</span><br><span class="line">　　remove   移除并返回队列头部的元素          如果队列为空，则抛出一个NoSuchElementException异常</span><br><span class="line">　　element  返回队列头部的元素                如果队列为空，则抛出一个NoSuchElementException异常</span><br><span class="line">　　offer    添加一个元素并返回true            如果队列已满，则返回false</span><br><span class="line">　　poll     移除并返问队列头部的元素           如果队列为空，则返回null</span><br><span class="line">　　peek     返回队列头部的元素                如果队列为空，则返回null</span><br><span class="line">　　put      添加一个元素                      如果队列满，则阻塞</span><br><span class="line">　　take     移除并返回队列头部的元素           如果队列为空，则阻塞</span><br><span class="line"></span><br><span class="line">　　* ArrayBlockingQueue ：一个由数组支持的有界队列。</span><br><span class="line">　　* LinkedBlockingQueue ：一个由链接节点支持的可选有界队列。</span><br><span class="line">　　* PriorityBlockingQueue ：一个由优先级堆支持的无界优先级队列。</span><br><span class="line">　　* DelayQueue ：一个由优先级堆支持的、基于时间的调度队列。</span><br><span class="line">　　* SynchronousQueue ：一个利用 BlockingQueue 接口的简单聚集（rendezvous）机制。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/../Java%E5%9F%BA%E7%A1%80.assets/image-20230825112127877.png" alt="image-20230825112127877"></p>
+<p>16: Enumeration接口和Iterator接口的区别有哪些?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enumeration速度是Iterator的2倍，同时占用更少的内存。但是，Iterator远远比Enumeration安全，因为其他线程不能够修改正在被iterator遍历的集合里面的对象。同时，Iterator允许调用者删除底层集合里面的元素，这对Enumeration来说是不可能的。</span><br></pre></td></tr></table></figure>
+
+<p>17: 异常</p>
+<p>受检查&#x2F;不受检查</p>
+<p>18: 什么是事务?为什么需要事务?如何实现事务?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">通常的观念认为，事务仅与数据库相关。</span><br><span class="line"></span><br><span class="line">事务必须服从ISO/IEC所制定的ACID原则。ACID是原子性（atomicity）、一致性（consistency）、隔离性 （isolation）和持久性（durability）的缩写。</span><br><span class="line"></span><br><span class="line">事务的原子性：表示事务执行过程中的任何失败都将导致事务所做的任何修改失效。</span><br><span class="line">事务的一致性：表示当事务执行失败时，所有被该事务影响的数据都应该恢复到事务执行前的状态。</span><br><span class="line">事务的隔离性：表示在事务执行过程中对数据的修改，在事务提交之前对其他事务不可见。</span><br><span class="line">事务的持久性：表示已提交的数据在事务执行失败时，数据的状态都应该正确。</span><br><span class="line"></span><br><span class="line">通俗的理解，事务是一组原子操作单元，从数据库角度说，就是一组SQL指令，要么全部执行成功，若因为某个原因其中一条指令执行有错误，则撤销先前执行过的所有指令。更简答的说就是：要么全部执行成功，要么撤销不执行。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">Java事务的类型有三种：JDBC事务、JTA（Java Transaction API）事务、容器事务。</span><br><span class="line"></span><br><span class="line">1.JDBC事务</span><br><span class="line">JDBC 事务是用 Connection 对象控制的。JDBC Connection 接口（ java.sql.Connection ）提供了两种事务模式：自动提交和手工提交。</span><br><span class="line"></span><br><span class="line">复制代码</span><br><span class="line">1 java.sql.Connection 提供了以下控制事务的方法：</span><br><span class="line">2 </span><br><span class="line">3 public void setAutoCommit(boolean)</span><br><span class="line">4 public boolean getAutoCommit()</span><br><span class="line">5 public void commit()</span><br><span class="line">6 public void rollback()</span><br><span class="line">复制代码</span><br><span class="line">使用 JDBC 事务界定时，您可以将多个 SQL 语句结合到一个事务中。</span><br><span class="line">JDBC 事务的一个缺点是事务的范围局限于一个数据库连接。一个 JDBC 事务不能跨越多个数据库。</span><br><span class="line"></span><br><span class="line">2.JTA（Java Transaction API）事务</span><br><span class="line"></span><br><span class="line">JTA是一种高层的，与实现无关的，与协议无关的API，应用程序和应用服务器可以使用JTA来访问事务。</span><br><span class="line"></span><br><span class="line">JTA允许应用程序执行分布式事务处理——在两个或多个网络计算机资源上访问并且更新数据，这些数据可以分布在多个数据库上。JDBC驱动程序的JTA支持极大地增强了数据访问能力。</span><br><span class="line"></span><br><span class="line">如果计划用 JTA 界定事务，那么就需要有一个实现 javax.sql.XADataSource 、 javax.sql.XAConnection 和 javax.sql.XAResource 接口的 JDBC 驱动程序。一个实现了这些接口的驱动程序将可以参与 JTA 事务。一个 XADataSource 对象就是一个 XAConnection 对象的工厂。 XAConnection s 是参与 JTA 事务的 JDBC 连接。</span><br><span class="line">您将需要用应用服务器的管理工具设置 XADataSource .从应用服务器和 JDBC 驱动程序的文档中可以了解到相关的指导。</span><br><span class="line">J2EE应用程序用 JNDI 查询数据源。一旦应用程序找到了数据源对象，它就调用 javax.sql.DataSource.getConnection（） 以获得到数据库的连接。</span><br><span class="line">XA 连接与非 XA 连接不同。一定要记住 XA 连接参与了 JTA 事务。这意味着 XA 连接不支持 JDBC 的自动提交功能。同时，应用程序一定不要对 XA 连接调用 java.sql.Connection.commit（） 或者 java.sql.Connection.rollback（） .</span><br><span class="line">相反，应用程序应该使用 UserTransaction.begin（）、 UserTransaction.commit（） 和 serTransaction.rollback（） .</span><br><span class="line"></span><br><span class="line">3.容器事务</span><br><span class="line"></span><br><span class="line">容器事务主要是J2EE应用服务器提供的，容器事务大多是基于JTA完成，这是一个基于JNDI的，相当复杂的API实现。相对编码实现JTA事务管理， 我们可以通过EJB容器提供的容器事务管理机制（CMT）完成同一个功能，这项功能由J2EE应用服务器提供。这使得我们可以简单的指定将哪个方法加入事 务，一旦指定，容器将负责事务管理任务。这是我们土建的解决方式，因为通过这种方式我们可以将事务代码排除在逻辑编码之外，同时将所有困难交给J2EE容 器去解决。使用EJB CMT的另外一个好处就是程序员无需关心JTA API的编码，不过，理论上我们必须使用EJB.</span><br><span class="line"></span><br><span class="line">三种Java事务差异?#</span><br><span class="line">1、JDBC事务控制的局限性在一个数据库连接内，但是其使用简单。</span><br><span class="line">2、JTA事务的功能强大，事务可以跨越多个数据库或多个DAO，使用也比较复杂。</span><br><span class="line">3、容器事务，主要指的是J2EE应用服务器提供的事务管理，局限于EJB应用使用。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">事务并发处理可能引起的问题</span><br><span class="line"></span><br><span class="line">脏读(dirty read)：一个事务读取了另一个事务尚未提交的数据，</span><br><span class="line">不可重复读(non-repeatable read) ：一个事务的操作导致另一个事务前后两次读取到不同的数据</span><br><span class="line">幻读(phantom read) ：一个事务的操作导致另一个事务前后两次查询的结果数据量不同。</span><br><span class="line"></span><br><span class="line">举例：</span><br><span class="line"></span><br><span class="line">事务A、B并发执行时，当A事务update后，B事务select读取到A尚未提交的数据，此时A事务rollback，则B读到的数据是无效的”脏”数据。</span><br><span class="line">当B事务select读取数据后，A事务update操作更改B事务select到的数据，此时B事务再次读去该数据，发现前后两次的数据不一样。</span><br><span class="line">当B事务select读取数据后，A事务insert或delete了一条满足A事务的select条件的记录，此时B事务再次select，发现查询到前次不存在的记录(“幻影”)，或者前次的某个记录不见了。</span><br></pre></td></tr></table></figure>
+
+<p>19: java修饰符以及个字的作用范围</p>
+<p>啊          访问权限    类    包  子类  其他包</p>
+<p>　　　　  public     ∨   ∨    ∨     ∨          （对任何人都是可用的）</p>
+<p>　　　　 protect    ∨   ∨   ∨     ×　　　 （继承的类可以访问以及和private一样的权限）</p>
+<p>　　　　 default    ∨   ∨   ×     ×　　　 （包访问权限，即在整个包内均可被访问）</p>
+<p>　　　　 private    ∨   ×   ×     ×　　　 （除类型创建者和类型的内部方法之外的任何人都不能访问的元素）</p>
+<h3 id="二-Java高级"><a href="#二-Java高级" class="headerlink" title="二: Java高级"></a>二: Java高级</h3><p><strong>linux部分</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">1：什么是linux？如何安装使用linux</span><br><span class="line">2：说说你常用的linux查看文件和文件夹命令</span><br><span class="line">3：常用查看文件的命令有哪些?</span><br><span class="line">4：如何递归删除文件夹和所有文件？</span><br><span class="line">5：如何拷贝，移动一个文件？</span><br><span class="line">6：如何查找一个文件？</span><br><span class="line">7：你还是使用过哪些常用的linux命令？</span><br><span class="line">8：grep是什么命令？man是什么命令？</span><br><span class="line">9：chmod是什么命令？</span><br><span class="line">10：VI、VIM是什么？</span><br><span class="line"></span><br><span class="line"> 1: chmod命令如何使用？  r,w,x/u,g,o/+,-/1,2,4 各自代表什么含义？</span><br><span class="line"> 2：什么是VI、VIM？说说你常用的VI命令和按键？</span><br><span class="line"> 3：什么是编辑视图、预览视图？</span><br><span class="line"> 4：netstat命令的作用？你如何使用？</span><br><span class="line"> 5：kill命令如何使用？</span><br><span class="line"> 6：linux下如何解压压缩文件？</span><br><span class="line"> 7：ps和grep各自作用是什么？如何使用？</span><br><span class="line"> 8：如何部署一个tomcat ， linux服务器？</span><br><span class="line"> 9：如何部署自己的项目至linux服务器？</span><br></pre></td></tr></table></figure>
+
+<h3 id="三-JavaWeb"><a href="#三-JavaWeb" class="headerlink" title="三: JavaWeb"></a>三: JavaWeb</h3><p>1:什么是servlet,jsp?</p>
+<p>2: web.xml在web项目中有什么作用?</p>
+<p>3: 说说servlet的原理</p>
+<p>4: jsp里面的内置对象</p>
+<p>5:什么是cookie?有什么作用?</p>
+<p>6: 什么是session? 有什么作用?</p>
+<p>7: 禁用客户端cookie,如何实现session?</p>
+<p>8: dopost doget的区别?还有哪些请求类型?</p>
+<p>9: Forward和Redirect的区别?</p>
+<p>10: HTTP请求&#x2F;响应的结构是怎么样的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HTTP响应由三个部分组成：</span><br><span class="line"></span><br><span class="line">状态码(Status Code)：描述了响应的状态。可以用来检查是否成功的完成了请求。请求失败的情况下，状态码可用来找出失败的原因。如果Servlet没有返回状态码，默认会返回成功的状态码HttpServletResponse.SC_OK。</span><br><span class="line"></span><br><span class="line">HTTP头部(HTTP Header)：它们包含了更多关于响应的信息。比如：头部可以指定认为响应过期的过期日期，或者是指定用来给用户安全的传输实体内容的编码格式。如何在Serlet中检索HTTP的头部看这里。</span><br><span class="line"></span><br><span class="line">主体(Body)：它包含了响应的内容。它可以包含HTML代码，图片，等等。主体是由传输在HTTP消息中紧跟在头部后面的数据字节组成的。</span><br></pre></td></tr></table></figure>
+
+<h3 id="五-框架技术"><a href="#五-框架技术" class="headerlink" title="五: 框架技术"></a>五: 框架技术</h3><p>1: 什么是框架?如何使用框架?</p>
+<p>2: SSM,SSH,JPA,mybatisplus,及其实现原理?</p>
+<p>3: 简单说一下Spring的IOC,以及DI</p>
+<p>4: 简单说一下SpringAOP</p>
+<p>5: 什么是ORM</p>
+<p>6: 简要描述一下SSM如何进行整合</p>
+<p>7:  @RequestMapping及其系列注解</p>
+<p>8:  springmvc如何处理ajax请求?</p>
+<p>9: Mybatis优缺点分析</p>
+<p>10: #{}和${}的区别是什么?</p>
+<p>11: 实体类属性和数据表字段不一样如何处理?</p>
+<p>12: 为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？</p>
+<p>13: 什么是一对一,一对多,多对多? mybatis中如何实现?</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">zookeeper+RPC+Dubbo</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>1：什么是dubbo？<br>2：简述一下dubbo的原理<br>3：什么是zookeeper<br>4：什么是zookeeper的leader和flower和observer？<br>5：什么是过半机制，为什么zookeeper集群部署奇数台服务器？<br>6：zookeeper如何选举？<br>7：zookeeper存储数据的特点？<br>8：如何实现服务的注册与消费？简要写一下伪代码<br>9：dubbo框架需要web容器吗</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">再贴个链接</span><br><span class="line">https://zhuanlan.zhihu.com/p/84507021</span><br><span class="line"></span><br><span class="line">Dubbo框架本身并不需要Web容器，它是一个用于分布式服务调用的RPC框架。Dubbo可以在任何Java应用程序中运行，无需依赖特定的Web容器。然而，如果您希望将Dubbo用于Web服务，您可能需要将Dubbo集成到Web容器中，以便通过HTTP或其他Web协议进行服务调用。</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>10：dubbo有哪些负载均衡策略</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java%E7%9F%A5%E8%AF%86/" rel="tag"># Java知识</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/09/25/01-Spring%E5%BA%95%E5%B1%82%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" rel="next" title="spring的整体理解">
+                <i class="fa fa-chevron-left"></i> spring的整体理解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/01/25/%E7%AE%97%E6%B3%95/" rel="prev" title="算法与数据结构">
+                算法与数据结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">Java基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80-Java%E5%9F%BA%E7%A1%80"><span class="nav-number">1.0.1.</span> <span class="nav-text">一: Java基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C-Java%E9%AB%98%E7%BA%A7"><span class="nav-number">1.0.2.</span> <span class="nav-text">二: Java高级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89-JavaWeb"><span class="nav-number">1.0.3.</span> <span class="nav-text">三: JavaWeb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94-%E6%A1%86%E6%9E%B6%E6%8A%80%E6%9C%AF"><span class="nav-number">1.0.4.</span> <span class="nav-text">五: 框架技术</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2021 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ego</span>
+
+  
+</div>
+
+
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/ego/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
