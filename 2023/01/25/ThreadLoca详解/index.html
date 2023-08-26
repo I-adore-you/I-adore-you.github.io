@@ -84,11 +84,25 @@
 <meta property="og:site_name" content="Ego">
 <meta property="og:description" content="ThreadLocal 的一些原理">
 <meta property="og:locale">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210429878.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210441870.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210502701.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210515641.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825211131533.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825211100170.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210921774.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825211005275.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210948959.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210834561.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210748249.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210655375.png">
+<meta property="og:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210704423.png">
 <meta property="article:published_time" content="2023-01-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-08-25T03:09:24.646Z">
+<meta property="article:modified_time" content="2023-08-25T13:12:09.503Z">
 <meta property="article:author" content="Ego">
 <meta property="article:tag" content="并发编程">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210429878.png">
 
 
 
@@ -179,16 +193,6 @@
     <ul id="menu" class="menu">
       
         
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
             
@@ -205,6 +209,16 @@
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
           </a>
         </li>
       
@@ -322,7 +336,105 @@
       
 
       
-        
+        <h4 id="导致JVM内存泄露的ThreadLocal详解"><a href="#导致JVM内存泄露的ThreadLocal详解" class="headerlink" title="导致JVM内存泄露的ThreadLocal详解"></a>导致JVM内存泄露的ThreadLocal详解</h4><h5 id="为什么要有ThreadLocal"><a href="#为什么要有ThreadLocal" class="headerlink" title="为什么要有ThreadLocal"></a><strong>为什么要有ThreadLocal</strong></h5><p>我们首先来看看一段最纯粹的原生JDBC代码</p>
+<p>​    <img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210429878.png" alt="image-20230825210429878"></p>
+<p>可以看到，在使用JDBC时，我们首先要配置后再拿到JDBC连接，然后在增删改查的业务方法中拿到这个连接，并把我们的SQL语句交给JDBC连接发送到真实的DB上执行。</p>
+<p>在实际的工作中，我们不会每次执行SQL语句时临时去建立连接，而是会借助数据库连接池，同时因为实际业务的复杂性，为了保证数据的一致性，我们还会引入事务操作，于是上面的代码就会变成：</p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210441870.png" alt="image-20230825210441870"></p>
+<p>但是上面的代码包含什么样的问题呢？分析代码我们可以发现，执行业务方法business时，为了启用事务，我们从数据库连接池中拿了一个连接，但是在具体的insert方法和getAll方法中，在执行具体的SQL语句时，我们从数据库连接池中拿一个连接，这就说执行事务和执行SQL语句完全是不同的数据库连接，这会导致什么问题？事务失效了！！数据库执行事务时，事务的开启和提交、语句的执行等都是必须在一个连接中的。实际上，上面的代码要保证数据的一致性，就必须要启用分布式事务。</p>
+<p>怎么解决这个问题呢？有一个解决思路是，把数据库连接作为方法的参数，在方法之间进行传递，比如下面这样：</p>
+<p>  <img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210502701.png" alt="image-20230825210502701"></p>
+<p>​    </p>
+<p>但是我们分析平时我们使用SSM的代码会发现，我们在编写数据访问相关代码的时候从来没有把数据库连接作为方法参数进行传递。这意味着，对Spring来说，在帮我们进行事务托管的时候，会遇到同样的问题，那么Spring是如何解决这个问题的？</p>
+<p>其实稍微分析下Spring的事务管理器的代码就能发现端倪，在org.springframework.jdbc.datasource.DataSourceTransactionManager#doBegin中，我们会看到如下代码</p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210515641.png" alt="image-20230825210515641"></p>
+<p>上面的注释已经很清楚了说明“绑定连接到这个线程”，如何绑定的？继续深入看看</p>
+<p>看来，Spring是使用一个ThreadLocal来实现“绑定连接到线程”的。</p>
+<p>现在我们可以对ThreadLocal下一个比较确切的定义了</p>
+<p>This class provides thread-local variables. These variables differ from their normal counterparts in that each thread that accesses one (via its get or set method) has its own, independently initialized copy of the variable. ThreadLocal instances are typically private static fields in classes that wish to associate state with a thread (e.g., a user ID or Transaction ID).</p>
+<p>此类提供线程局部变量。这些变量与普通对应变量的不同之处在于，访问一个变量的每个线程（通过其 get 或 set 方法）都有自己独立初始化的变量副本。ThreadLocal 实例通常是希望将状态与线程（例如，用户 ID 或事务 ID）相关联的类中的私有静态字段。</p>
+<p>也就是说ThreadLocal为每个线程都提供了变量的副本，使得每个线程在某一时间访问到的并非同一个对象，这样就隔离了多个线程对数据的数据共享。</p>
+<p>由此也可以看出ThreadLocal和Synchonized都用于解决多线程并发访问。可是ThreadLocal与synchronized有本质的差别。synchronized是利用锁的机制，使变量或代码块在某一时该仅仅能被一个线程访问，ThreadLocal则是副本机制。此时不论多少线程并发访问都是线程安全的。</p>
+<p>ThreadLocal的一大应用场景就是跨方法进行参数传递，比如Web容器中，每个完整的请求周期会由一个线程来处理。结合ThreadLocal再使用Spring里的IOC和AOP，就可以很好的解决我们上面的事务的问题。只要将一个数据库连接放入ThreadLocal中，当前线程执行时只要有使用数据库连接的地方就从ThreadLocal获得就行了。</p>
+<p>再比如，在微服务领域，链路跟踪中的traceId传递也是利用了ThreadLocal。</p>
+<h5 id="ThreadLocal的使用"><a href="#ThreadLocal的使用" class="headerlink" title="ThreadLocal的使用"></a><strong>ThreadLocal的使用</strong></h5><p>ThreadLocal类接口很简单，只有4个方法，我们先来了解一下：</p>
+<p>• void set(Object value) </p>
+<p>设置当前线程的线程局部变量的值。</p>
+<p>• public Object get() </p>
+<p>该方法返回当前线程所对应的线程局部变量。</p>
+<p>• public void remove() </p>
+<p>将当前线程局部变量的值删除，目的是为了减少内存的占用，该方法是JDK 5.0新增的方法。需要指出的是，当线程结束后，对应该线程的局部变量将自动被垃圾回收，所以显式调用该方法清除线程的局部变量并不是必须的操作，但它可以加快内存回收的速度。</p>
+<p>• protected Object initialValue() </p>
+<p>返回该线程局部变量的初始值，该方法是一个protected的方法，显然是为了让子类覆盖而设计的。这个方法是一个延迟调用方法，在线程第1次调用get()或set(Object)时才执行，并且仅执行1次。ThreadLocal中的缺省实现直接返回一个null。</p>
+<p><strong>实现解析</strong></p>
+<p><strong>实现分析</strong></p>
+<p>怎么实现ThreadLocal，既然说让每个线程都拥有自己变量的副本，最容易的方式就是用一个Map将线程的副本存放起来，Map里key就是每个线程的唯一性标识，比如线程ID，value就是副本值，实现起来也很简单：</p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825211131533.png" alt="image-20230825211131533"></p>
+<p>考虑到并发安全性，对数据的存取用synchronize关键字加锁，但是<strong>DougLee大师</strong>在《并发编程实战》中为我们做过性能测试</p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825211100170.png" alt="image-20230825211100170"></p>
+<p>可以看到ThreadLocal的性能远超类似synchronize的锁实现ReentrantLock，比我们后面要学的AtomicInteger也要快很多，即使我们把Map的实现更换为Java中专为并发设计的ConcurrentHashMap也不太可能达到这么高的性能。</p>
+<p>怎么样设计可以让ThreadLocal达到这么高的性能呢？最好的办法则是让变量副本跟随着线程本身，而不是将变量副本放在一个地方保存，这样就可以在存取时避开线程之间的竞争。</p>
+<p>同时，因为每个线程所拥有的变量的副本数是不定的，有些线程可能有一个，有些线程可能有2个甚至更多，则线程内部存放变量副本需要一个容器，而且容器要支持快速存取，所以在每个线程内部都可以持有一个Map来支持多个变量副本，这个Map被称为ThreadLocalMap。</p>
+<p><strong>具体实现</strong></p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210921774.png" alt="image-20230825210921774"></p>
+<p>上面先取到当前线程，然后调用getMap方法获取对应的ThreadLocalMap，ThreadLocalMap是一个声明在ThreadLocal的静态内部类，然后Thread类中有一个这样类型成员变量，也就是ThreadLocalMap实例化是在Thread内部，所以getMap是直接返回Thread的这个成员。</p>
+<p>看下ThreadLocal的内部类ThreadLocalMap源码，这里其实是个标准的Map实现，内部有一个元素类型为Entry的数组，用以存放线程可能需要的多个副本变量。</p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825211005275.png" alt="image-20230825211005275"></p>
+<p>可以看到有个Entry内部静态类，它继承了WeakReference，总之它记录了两个信息，一个是ThreadLocal类型，一个是Object类型的值。getEntry方法则是获取某个ThreadLocal对应的值，set方法就是更新或赋值相应的ThreadLocal对应的值。</p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210948959.png" alt="image-20230825210948959"></p>
+<p>回顾我们的get方法，其实就是拿到<strong>每个线程独有的ThreadLocalMap</strong></p>
+<p>然后再用ThreadLocal的当前实例，拿到Map中的相应的Entry，然后就可以拿到相应的值返回出去。当然，如果Map为空，还会先进行map的创建，初始化等工作。</p>
+<h5 id="Hash冲突的解决"><a href="#Hash冲突的解决" class="headerlink" title="Hash冲突的解决"></a><strong>Hash冲突的解决</strong></h5><p>什么是Hash，就是把任意长度的输入（又叫做预映射， pre-image），通过散列算法，变换成固定长度的输出，该输出就是散列值，输入的微小变化会导致输出的巨大变化。所以Hash常用在消息摘要或签名上，常用hash消息摘要算法有：（1)MD4（2) MD5它对输入仍以512位分组，其输出是4个32位字的级联（3)SHA-1及其他。</p>
+<p>Hash转换是一种压缩映射，也就是，散列值的空间通常远小于输入的空间，不同的输入可能会散列成相同的输出，所以不可能从散列值来确定唯一的输入值。比如有10000个数放到100个桶里，不管怎么放，有个桶里数字个数一定是大于2的。</p>
+<p>所以Hash简单的说就是一种将任意长度的消息压缩到某一固定长度的消息摘要的函数。常用HASH函数：直接取余法、乘法取整法、平方取中法。 Java里的HashMap用的就是直接取余法。</p>
+<p>我们已经知道Hash属于压缩映射，一定能会产生多个实际值映射为一个Hash值的情况，这就产生了冲突，常见处理Hash冲突方法：</p>
+<p><strong>开放定址法：</strong></p>
+<p>基本思想是，出现冲突后按照一定算法查找一个空位置存放，根据算法的不同又可以分为线性探测再散列、二次探测再散列、伪随机探测再散列。</p>
+<p>线性探测再散列即依次向后查找，二次探测再散列，即依次向前后查找，增量为1、2、3的二次方，伪随机，顾名思义就是随机产生一个增量位移。</p>
+<p>ThreadLocal里用的则是线性探测再散列</p>
+<p><strong>链地址法：</strong></p>
+<p>这种方法的基本思想是将所有哈希地址为i的元素构成一个称为同义词链的单链表，并将单链表的头指针存在哈希表的第i个单元中，因而查找、插入和删除主要在同义词链中进行。链地址法适用于经常进行插入和删除的情况。Java里的HashMap用的就是链地址法，为了避免hash 洪水攻击，1.8版本开始还引入了红黑树。</p>
+<p><strong>再哈希法：</strong></p>
+<p>这种方法是同时构造多个不同的哈希函数：Hi&#x3D;RH1（key） i&#x3D;1，2，…，k当哈希地址Hi&#x3D;RH1（key）发生冲突时，再计算Hi&#x3D;RH2（key）……，直到冲突不再产生。这种方法不易产生聚集，但增加了计算时间。</p>
+<p><strong>建立公共溢出区</strong></p>
+<p>这种方法的基本思想是：将哈希表分为基本表和溢出表两部分，凡是和基本表发生冲突的元素，一律填入溢出表。</p>
+<p><strong>引发的内存泄漏分析</strong></p>
+<p><strong>复习</strong></p>
+<p>引用</p>
+<p>Object o &#x3D; new Object();</p>
+<p>这个o，我们可以称之为对象引用，而new Object()我们可以称之为在内存中产生了一个对象实例。</p>
+<p> <img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210834561.png" alt="image-20230825210834561"></p>
+<p>当写下 <strong>o&#x3D;null</strong>时，只是表示o不再指向堆中object的对象实例，不代表这个对象实例不存在了。</p>
+<p><strong>强引用</strong>就是指在程序代码之中普遍存在的，类似“Object obj&#x3D;new Object（）”这类的引用，只要强引用还存在，垃圾收集器永远不会回收掉被引用的对象实例。</p>
+<p><strong>软引用</strong>是用来描述一些还有用但并非必需的对象。对于软引用关联着的对象，在系统将要发生内存溢出异常之前，将会把这些对象实例列进回收范围之中进行第二次回收。如果这次回收还没有足够的内存，才会抛出内存溢出异常。在JDK 1.2之后，提供了SoftReference类来实现软引用。</p>
+<p><strong>弱引用</strong>也是用来描述非必需对象的，但是它的强度比软引用更弱一些，被弱引用关联的对象实例只能生存到下一次垃圾收集发生之前。当垃圾收集器工作时，无论当前内存是否足够，都会回收掉只被弱引用关联的对象实例。在JDK 1.2之后，提供了WeakReference类来实现弱引用。</p>
+<p><strong>虚引用</strong>也称为幽灵引用或者幻影引用，它是最弱的一种引用关系。一个对象实例是否有虚引用的存在，完全不会对其生存时间构成影响，也无法通过虚引用来取得一个对象实例。为一个对象设置虚引用关联的唯一目的就是能在这个对象实例被收集器回收时收到一个系统通知。在JDK 1.2之后，提供了PhantomReference类来实现虚引用。</p>
+<h5 id="内存泄漏的现象"><a href="#内存泄漏的现象" class="headerlink" title="内存泄漏的现象"></a><strong>内存泄漏的现象</strong></h5><p><strong>分析</strong></p>
+<p>根据我们前面对ThreadLocal的分析，我们可以知道每个Thread 维护一个 ThreadLocalMap，这个映射表的 key 是 ThreadLocal实例本身，value 是真正需要存储的 Object，也就是说 ThreadLocal 本身并不存储值，它只是作为一个 key 来让线程从 ThreadLocalMap 获取 value。仔细观察ThreadLocalMap，这个map是使用 ThreadLocal 的弱引用作为 Key 的，弱引用的对象在 GC 时会被回收。</p>
+<p>因此使用了ThreadLocal后，引用链如图所示</p>
+<p><img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210748249.png" alt="image-20230825210748249"></p>
+<p>图中的虚线表示弱引用。</p>
+<p>这样，当把threadlocal变量置为null以后，没有任何强引用指向threadlocal实例，所以threadlocal将会被gc回收。这样一来，ThreadLocalMap中就会出现key为null的Entry，就没有办法访问这些key为null的Entry的value，如果当前线程再迟迟不结束的话，这些key为null的Entry的value就会一直存在一条强引用链：Thread Ref -&gt; Thread -&gt; ThreaLocalMap -&gt; Entry -&gt; value，而这块value永远不会被访问到了，所以存在着内存泄露。</p>
+<p>只有当前thread结束以后，current thread就不会存在栈中，强引用断开，Current Thread、Map value将全部被GC回收。最好的做法是不在需要使用ThreadLocal变量后，都调用它的remove()方法，清除数据。</p>
+<p>所以回到我们前面的实验场景，场景3中，虽然线程池里面的任务执行完毕了，但是线程池里面的5个线程会一直存在直到JVM退出，我们set了线程的localVariable变量后没有调用localVariable.remove()方法，导致线程池里面的5个线程的threadLocals变量里面的new LocalVariable()实例没有被释放。</p>
+<p>其实考察ThreadLocal的实现，我们可以看见，无论是get()、set()在某些时候，调用了expungeStaleEntry方法用来清除Entry中Key为null的Value，但是这是不及时的，也不是每次都会执行的，所以一些情况下还是会发生内存泄露。只有remove()方法中显式调用了expungeStaleEntry方法。</p>
+<p>从表面上看内存泄漏的根源在于使用了弱引用，但是另一个问题也同样值得思考：为什么使用弱引用而不是强引用？</p>
+<p>下面我们分两种情况讨论：</p>
+<p>key 使用强引用：对ThreadLocal对象实例的引用被置为null了，但是ThreadLocalMap还持有这个ThreadLocal对象实例的强引用，如果没有手动删除，ThreadLocal的对象实例不会被回收，导致Entry内存泄漏。</p>
+<p>key 使用弱引用：对ThreadLocal对象实例的引用被被置为null了，由于ThreadLocalMap持有ThreadLocal的弱引用，即使没有手动删除，ThreadLocal的对象实例也会被回收。value在下一次ThreadLocalMap调用set，get，remove都有机会被回收。</p>
+<p>比较两种情况，我们可以发现：由于ThreadLocalMap的生命周期跟Thread一样长，如果都没有手动删除对应key，都会导致内存泄漏，但是使用弱引用可以多一层保障。</p>
+<p>因此，ThreadLocal内存泄漏的根源是：由于ThreadLocalMap的生命周期跟Thread一样长，如果没有手动删除对应key就会导致内存泄漏，而不是因为弱引用。</p>
+<p><strong>总结</strong></p>
+<p>JVM利用设置ThreadLocalMap的Key为弱引用，来避免内存泄露。</p>
+<p>JVM利用调用remove、get、set方法的时候，回收弱引用。</p>
+<p>当ThreadLocal存储很多Key为null的Entry的时候，而不再去调用remove、get、set方法，那么将导致内存泄漏。</p>
+<p>使用<strong>线程池+</strong> ThreadLocal时要小心，因为这种情况下，线程是一直在不断的重复运行的，从而也就造成了value可能造成累积的情况。</p>
+<h5 id="错误使用ThreadLocal导致线程不安全"><a href="#错误使用ThreadLocal导致线程不安全" class="headerlink" title="错误使用ThreadLocal导致线程不安全"></a><strong>错误使用ThreadLocal导致线程不安全</strong></h5><p>参见代码：</p>
+<p>   <img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210655375.png" alt="image-20230825210655375"></p>
+<p>为什么每个线程都输出115？难道他们没有独自保存自己的Number副本吗？为什么其他线程还是能够修改这个值？仔细考察ThreadLocal和Thead的代码，我们发现ThreadLocalMap中保存的其实是对象的一个引用，这样的话，当有其他线程对这个引用指向的对象实例做修改时，其实也同时影响了所有的线程持有的对象引用所指向的同一个对象实例。这也就是为什么上面的程序为什么会输出一样的结果。</p>
+<p>而上面的程序要正常的工作，应该的用法是让每个线程中的ThreadLocal都应该持有一个新的Number对象。</p>
+<p> <img src="/../ThreadLoca%E8%AF%A6%E8%A7%A3.assets/image-20230825210704423.png" alt="image-20230825210704423"></p>
+
       
     </div>
     
@@ -352,8 +464,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2023/01/25/%E7%AE%97%E6%B3%95/" rel="next" title="算法与数据结构">
-                <i class="fa fa-chevron-left"></i> 算法与数据结构
+              <a href="/2023/01/25/Java%E5%9F%BA%E7%A1%80/" rel="next" title="java基础">
+                <i class="fa fa-chevron-left"></i> java基础
               </a>
             
           </div>
@@ -362,8 +474,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2023/01/25/spring%E7%9A%84%E4%BA%8B%E5%8A%A1/" rel="prev" title="spring的事务机制">
-                spring的事务机制 <i class="fa fa-chevron-right"></i>
+              <a href="/2023/03/25/%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B9%B6%E5%8F%91%E5%B7%A5%E5%85%B7%E7%B1%BB/" rel="prev" title="同步工具类">
+                同步工具类 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -416,8 +528,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -432,7 +553,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -445,7 +566,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -468,6 +589,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E8%87%B4JVM%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E7%9A%84ThreadLocal%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">导致JVM内存泄露的ThreadLocal详解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89ThreadLocal"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要有ThreadLocal</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ThreadLocal%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">ThreadLocal的使用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Hash%E5%86%B2%E7%AA%81%E7%9A%84%E8%A7%A3%E5%86%B3"><span class="nav-number">1.3.</span> <span class="nav-text">Hash冲突的解决</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E7%9A%84%E7%8E%B0%E8%B1%A1"><span class="nav-number">1.4.</span> <span class="nav-text">内存泄漏的现象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E4%BD%BF%E7%94%A8ThreadLocal%E5%AF%BC%E8%87%B4%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8"><span class="nav-number">1.5.</span> <span class="nav-text">错误使用ThreadLocal导致线程不安全</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

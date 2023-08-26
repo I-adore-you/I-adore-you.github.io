@@ -77,14 +77,14 @@
 
 
 
-<meta name="description" content="4，创建型模式4.2 工厂模式4.2.1 概述需求：设计一个咖啡店点餐系统。   设计一个咖啡类（Coffee），并定义其两个子类（美式咖啡【AmericanCoffee】和拿铁咖啡【LatteCoffee】）；再设计一个咖啡店类（CoffeeStore），咖啡店具有点咖啡的功能。 具体类的设计如下：   在java中，万物皆对象，这些对象都需要创建，如果创建的时候直接new该对象，就会对该对象耦">
+<meta name="description" content="4，创建型模式4.2 工厂模式4.2.1 概述需求：设计一个咖啡店点餐系统。   设计一个咖啡类（Coffee），并定义其两个子类（美式咖啡【AmericanCoffee】和拿铁咖啡【LatteCoffee】）；再设计一个咖啡店类（CoffeeStore），咖啡店具有点咖啡的功能。 具体类的设计如下：  在java中，万物皆对象，这些对象都需要创建，如果创建的时候直接new该对象，就会对该对象耦合">
 <meta property="og:type" content="article">
 <meta property="og:title" content="工厂模式">
 <meta property="og:url" content="http://example.com/2022/12/27/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-day02/index.html">
 <meta property="og:site_name" content="Ego">
-<meta property="og:description" content="4，创建型模式4.2 工厂模式4.2.1 概述需求：设计一个咖啡店点餐系统。   设计一个咖啡类（Coffee），并定义其两个子类（美式咖啡【AmericanCoffee】和拿铁咖啡【LatteCoffee】）；再设计一个咖啡店类（CoffeeStore），咖啡店具有点咖啡的功能。 具体类的设计如下：   在java中，万物皆对象，这些对象都需要创建，如果创建的时候直接new该对象，就会对该对象耦">
+<meta property="og:description" content="4，创建型模式4.2 工厂模式4.2.1 概述需求：设计一个咖啡店点餐系统。   设计一个咖啡类（Coffee），并定义其两个子类（美式咖啡【AmericanCoffee】和拿铁咖啡【LatteCoffee】）；再设计一个咖啡店类（CoffeeStore），咖啡店具有点咖啡的功能。 具体类的设计如下：  在java中，万物皆对象，这些对象都需要创建，如果创建的时候直接new该对象，就会对该对象耦合">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/2022/12/27/img/%E5%B7%A5%E5%8E%82%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%BC%95%E5%85%A5.png">
+<meta property="og:image" content="http://example.com/img/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.png">
 <meta property="og:image" content="http://example.com/2022/12/27/img/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.png">
 <meta property="og:image" content="http://example.com/2022/12/27/img/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F.png">
 <meta property="og:image" content="http://example.com/2022/12/27/img/image-20200401214509176.png">
@@ -99,11 +99,11 @@
 <meta property="og:image" content="http://example.com/2022/12/27/img/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F.png">
 <meta property="og:image" content="http://example.com/2022/12/27/img/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F1.png">
 <meta property="article:published_time" content="2022-12-26T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-08-25T10:48:06.207Z">
+<meta property="article:modified_time" content="2023-08-25T14:29:48.820Z">
 <meta property="article:author" content="Ego">
 <meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2022/12/27/img/%E5%B7%A5%E5%8E%82%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%BC%95%E5%85%A5.png">
+<meta name="twitter:image" content="http://example.com/img/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.png">
 
 
 
@@ -194,16 +194,6 @@
     <ul id="menu" class="menu">
       
         
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-tags">
           <a href="/tags/" rel="section">
             
@@ -220,6 +210,16 @@
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
           </a>
         </li>
       
@@ -336,8 +336,7 @@
         <h1 id="4，创建型模式"><a href="#4，创建型模式" class="headerlink" title="4，创建型模式"></a>4，创建型模式</h1><h2 id="4-2-工厂模式"><a href="#4-2-工厂模式" class="headerlink" title="4.2 工厂模式"></a>4.2 工厂模式</h2><h3 id="4-2-1-概述"><a href="#4-2-1-概述" class="headerlink" title="4.2.1 概述"></a>4.2.1 概述</h3><p>需求：设计一个咖啡店点餐系统。  </p>
 <p>设计一个咖啡类（Coffee），并定义其两个子类（美式咖啡【AmericanCoffee】和拿铁咖啡【LatteCoffee】）；再设计一个咖啡店类（CoffeeStore），咖啡店具有点咖啡的功能。</p>
 <p>具体类的设计如下：</p>
-<img src="../img/工厂设计模式引入.png" style="zoom:80%;" />
-
+<p><img src="/../img/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F.png"></p>
 <p>在java中，万物皆对象，这些对象都需要创建，如果创建的时候直接new该对象，就会对该对象耦合严重，假如我们要更换对象，所有new对象的地方都需要修改一遍，这显然违背了软件设计的开闭原则。如果我们使用工厂来生产对象，我们就只和工厂打交道就可以了，彻底和对象解耦，如果要更换对象，直接在工厂里更换该对象即可，达到了与对象解耦的目的；所以说，工厂模式最大的优点就是：<strong>解耦</strong>。</p>
 <p>在本教程中会介绍三种工厂的使用</p>
 <ul>
@@ -700,7 +699,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -713,7 +712,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
