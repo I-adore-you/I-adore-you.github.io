@@ -66,7 +66,7 @@
 
 
 
-  <meta name="keywords" content="分布式," />
+  <meta name="keywords" content="并发编程," />
 
 
 
@@ -77,18 +77,24 @@
 
 
 
-<meta name="description" content="探寻分布式的实现">
+<meta name="description" content="Volatile关键字的详细介绍">
 <meta property="og:type" content="article">
-<meta property="og:title" content="分布式锁">
-<meta property="og:url" content="http://example.com/2023/04/29/%E5%88%86%E5%B8%83%E5%BC%8F/index.html">
+<meta property="og:title" content="Volatile关键字">
+<meta property="og:url" content="http://example.com/2023/05/25/Volatile/index.html">
 <meta property="og:site_name" content="Ego">
-<meta property="og:description" content="探寻分布式的实现">
+<meta property="og:description" content="Volatile关键字的详细介绍">
 <meta property="og:locale">
-<meta property="article:published_time" content="2023-04-28T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-08-26T01:02:37.291Z">
+<meta property="og:image" content="http://example.com/Volatile.assets/image-20230826172012247.png">
+<meta property="og:image" content="http://example.com/Volatile.assets/image-20230826172045522.png">
+<meta property="og:image" content="http://example.com/Volatile.assets/image-20230826222140112.png">
+<meta property="og:image" content="http://example.com/Volatile.assets/image-20230826222238172.png">
+<meta property="og:image" content="http://example.com/Volatile.assets/image-20230826222313646.png">
+<meta property="article:published_time" content="2023-05-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-08-26T14:28:07.451Z">
 <meta property="article:author" content="Ego">
-<meta property="article:tag" content="分布式">
+<meta property="article:tag" content="并发编程">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/Volatile.assets/image-20230826172012247.png">
 
 
 
@@ -118,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://example.com/2023/04/29/分布式/"/>
+  <link rel="canonical" href="http://example.com/2023/05/25/Volatile/"/>
 
 
 
 
 
-  <title>分布式锁 | Ego</title>
+  <title>Volatile关键字 | Ego</title>
   
 
 
@@ -251,7 +257,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/29/%E5%88%86%E5%B8%83%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/25/Volatile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -268,7 +274,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">分布式锁</h1>
+          <h1 class="post-title" itemprop="name headline">Volatile关键字</h1>
         
 
         <div class="post-meta">
@@ -280,8 +286,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-29T00:00:00+08:00">
-                2023-04-29
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-05-25T00:00:00+08:00">
+                2023-05-25
               </time>
             
 
@@ -305,7 +311,7 @@
 
           
               <div class="post-description">
-                  探寻分布式的实现
+                  Volatile关键字的详细介绍
               </div>
           
 
@@ -322,12 +328,23 @@
       
 
       
-        <h4 id="为什么要有分布式锁？"><a href="#为什么要有分布式锁？" class="headerlink" title="为什么要有分布式锁？"></a>为什么要有分布式锁？</h4><ul>
-<li><p>单机锁的缺点</p>
-</li>
-<li><p>分布式锁</p>
-</li>
-</ul>
+        <h4 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h4><p>cpu 级别的Lock  指令</p>
+<p><img src="/../Volatile.assets/image-20230826172012247.png" alt="image-20230826172012247"></p>
+<p><img src="/../Volatile.assets/image-20230826172045522.png" alt="image-20230826172045522"></p>
+<h4 id="DCL-双重检查锁-来实现的单例模式的本质原理"><a href="#DCL-双重检查锁-来实现的单例模式的本质原理" class="headerlink" title="DCL 双重检查锁,来实现的单例模式的本质原理"></a>DCL 双重检查锁,来实现的单例模式的本质原理</h4><p>所以volatile 底层是通过 读写屏障,来实现 禁止指令重排序的, </p>
+<p>而内存 屏障的实现,是 cpu 的汇编指令实现的: Lock 指令</p>
+<p><img src="/../Volatile.assets/image-20230826222140112.png" alt="image-20230826222140112"></p>
+<p>发生指令重排序</p>
+<p><img src="/../Volatile.assets/image-20230826222238172.png" alt="image-20230826222238172"></p>
+<p>结果就是 可能会使用了半初始化状态的对象</p>
+<p><img src="/../Volatile.assets/image-20230826222313646.png" alt="image-20230826222313646"></p>
+<p>当 INSTANCE 变量 被 volatile 变量修饰的时候, 在 INSTACNE 赋值的时候,在该赋值操作的前后加上 内存屏障!</p>
+<p>具体的体现就是:   因为 指令 7 是一个 volatile 的一个赋值操作, 所以 在 指令 4  和 7 之间 会有一个 LOADLOAD 屏障(这可以直接说 有一个 内存屏障, 具体体现是 LL 屏障)</p>
+<p><strong>会禁止 指令 7 之前的 指令操作 重排序到指令 4 后面 (这就是本质!)</strong></p>
+<blockquote>
+<p>参考:</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://cloud.fynote.com/share/d/Ls1PQjj#%E7%A9%BF%E8%B6%8A%E7%BA%BF%E7%A8%8B%E7%9A%84%E8%BF%B7%E5%AE%AB_0">穿越线程的迷宫 枫叶云笔记 (fynote.com)</a></p>
 
       
     </div>
@@ -345,7 +362,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+            <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag"># 并发编程</a>
           
         </div>
       
@@ -358,8 +375,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2023/04/25/%E5%88%86%E5%B8%83%E5%BC%8FID/" rel="next" title="分布式ID">
-                <i class="fa fa-chevron-left"></i> 分布式ID
+              <a href="/2023/05/24/spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC/" rel="next" title="spring的事件">
+                <i class="fa fa-chevron-left"></i> spring的事件
               </a>
             
           </div>
@@ -368,8 +385,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2023/05/24/spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC/" rel="prev" title="spring的事件">
-                spring的事件 <i class="fa fa-chevron-right"></i>
+              <a href="/2023/07/17/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -447,7 +464,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -493,7 +510,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么要有分布式锁？</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C"><span class="nav-number">1.</span> <span class="nav-text">内存屏障</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DCL-%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E9%94%81-%E6%9D%A5%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%9C%AC%E8%B4%A8%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">DCL 双重检查锁,来实现的单例模式的本质原理</span></a></li></ol></div>
             
 
           </div>
