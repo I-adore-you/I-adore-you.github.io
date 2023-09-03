@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/ego/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/ego/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="spring," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在业务中使用@Async 需要注意的事项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Async注解">
+<meta property="og:url" content="http://example.com/2023/05/25/spring@Async%E6%B3%A8%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Ego">
+<meta property="og:description" content="在业务中使用@Async 需要注意的事项">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/%E7%AE%80%E5%8E%86.assets/image-20230817215416284.png">
+<meta property="og:image" content="http://example.com/%E7%AE%80%E5%8E%86.assets/image-20230817210803151.png">
+<meta property="og:image" content="http://example.com/%E7%AE%80%E5%8E%86.assets/image-20230817211104159.png">
+<meta property="og:image" content="http://example.com/%E7%AE%80%E5%8E%86.assets/image-20230817211353832.png">
+<meta property="og:image" content="http://example.com/%E7%AE%80%E5%8E%86.assets/image-20230817211556539.png">
+<meta property="og:image" content="http://example.com/%E7%AE%80%E5%8E%86.assets/image-20230818100805355.png">
+<meta property="article:published_time" content="2023-05-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-09-03T07:23:12.277Z">
+<meta property="article:author" content="Ego">
+<meta property="article:tag" content="spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E7%AE%80%E5%8E%86.assets/image-20230817215416284.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2023/05/25/spring@Async注解/"/>
+
+
+
+
+
+  <title>Async注解 | Ego</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ego</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">天道不一定酬所有的勤，但是天道一定酬勤！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/25/spring@Async%E6%B3%A8%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ego">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Async注解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-05-25T00:00:00+08:00">
+                2023-05-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  在业务中使用@Async 需要注意的事项
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="Async"><a href="#Async" class="headerlink" title="@Async"></a>@Async</h5><blockquote>
+<p>这个  注解的功能 应该 是  存在 一个 <strong>实现了 BeanPostProcessor 的 实现类</strong>, 然后通过 该实现类</p>
+<p>本质上是通过aop , 还是先生成代理对象</p>
+<p>然后  在执行方法的  时候, 会 执行代理对象的 invoke 方法,  然后 从线程池中拿到 一个 线程, 然后调用 目标对象的 方法</p>
+<p>这样实现的一个异步嘛!</p>
+</blockquote>
+<p>   当前最 核心的 类出来了 , 线程池 相关的所有 逻辑  都可以 在当前类下找到</p>
+<ul>
+<li>如果 队列 和 最大线程数 都满了, 时候的 策略 !<ul>
+<li>默认是 , 直接 抛异常</li>
+</ul>
+</li>
+<li>阻塞队列 (容量不配置的默认是  整型的最大值)</li>
+</ul>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> BlockingQueue&lt;Runnable&gt; <span class="title function_">createQueue</span><span class="params">(<span class="type">int</span> queueCapacity)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (BlockingQueue)(queueCapacity &gt; <span class="number">0</span> ? <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>(queueCapacity) : <span class="keyword">new</span> <span class="title class_">SynchronousQueue</span>());</span><br><span class="line">&#125;</span><br><span class="line">   </span><br></pre></td></tr></table></figure>
+
+<p>   <img src="/../%E7%AE%80%E5%8E%86.assets/image-20230817215416284.png" alt="image-20230817215416284"></p>
+<p>   使用的 线程池 目前 可以确定的是:</p>
+<p>   <img src="/../%E7%AE%80%E5%8E%86.assets/image-20230817210803151.png" alt="image-20230817210803151"></p>
+<ul>
+<li>而上面这个线程池 是通过下面这个  AutoConfiguration 配置类 生成的</li>
+</ul>
+<p><img src="/../%E7%AE%80%E5%8E%86.assets/image-20230817211104159.png" alt="image-20230817211104159"></p>
+<ul>
+<li>而上面这个 配置  线程池的 属性 在 yml 配置文件也是可以配置的</li>
+</ul>
+<p><img src="/../%E7%AE%80%E5%8E%86.assets/image-20230817211353832.png" alt="image-20230817211353832"></p>
+<ul>
+<li>所配置的 yml 的 属性值 ,最终都会读取到  ,下面这个 配置类中去(准确点来说, 是读取到 下面的  <strong>Pool 类的 属性中)</strong></li>
+</ul>
+<p><img src="/../%E7%AE%80%E5%8E%86.assets/image-20230817211556539.png" alt="image-20230817211556539"></p>
+<blockquote>
+<p> 这张图 可是 有很多的信息的!</p>
+<p> <strong>注意 @Bean 注解 可以 给 一个 Bean  声明 多个 名字</strong></p>
+</blockquote>
+<p><img src="/../%E7%AE%80%E5%8E%86.assets/image-20230818100805355.png" alt="image-20230818100805355"></p>
+<h5 id="Async注解部分源码"><a href="#Async注解部分源码" class="headerlink" title="@Async注解部分源码"></a><strong>@Async注解部分源码</strong></h5><blockquote>
+<p> 在这里 指定的 Bean_Name 的 也是 <strong>taskExecutor</strong>   , 刚好 和 上面的  声明的 bean 所 对应</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//  实现 了  BeanFactoryAware  接口 是为了 注入 spring的 bean 工厂, 为后续 </span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AsyncExecutionAspectSupport</span> <span class="keyword">implements</span> <span class="title class_">BeanFactoryAware</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">DEFAULT_TASK_EXECUTOR_BEAN_NAME</span> <span class="operator">=</span> <span class="string">&quot;taskExecutor&quot;</span>;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">Log</span> <span class="variable">logger</span> <span class="operator">=</span> LogFactory.getLog(<span class="built_in">this</span>.getClass());</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    这里面,为什么 要声明 这个 Map?</span></span><br><span class="line"><span class="comment">    你想 你的 @Async 注解 是不是 可以声明在 不同的 方法 和 类上面, 那不同的  **声明位置, 可能 配置的 线程池 也是不一样的**</span></span><br><span class="line"><span class="comment">    所以这一点, 是为了 给指定的 方法 Method 上面的 @Async ,匹配 对应的 线程池!  (考虑的是真周到!)</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Method, AsyncTaskExecutor&gt; executors = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>(<span class="number">16</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//  默认的线程池 , 就是 你上面 流程 中所看到的那个  taskExecutor, (不过 它 还有 另外的一个名种子)</span></span><br><span class="line">    <span class="keyword">private</span> SingletonSupplier&lt;Executor&gt; defaultExecutor;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     默认的 异常处理器</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">    <span class="keyword">private</span> SingletonSupplier&lt;AsyncUncaughtExceptionHandler&gt; exceptionHandler;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    spring的 bean 工厂</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">private</span> BeanFactory beanFactory;</span><br><span class="line">	</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    初始化  默认的 线程池, 以及 异常处理器</span></span><br><span class="line"><span class="comment">    下面这两个重载的 构造器 ,其实是为了 定制化吧!(  这种方式的重载 构造器 很常见 , 注意学习以下!)</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AsyncExecutionAspectSupport</span><span class="params">(<span class="meta">@Nullable</span> Executor defaultExecutor)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.defaultExecutor = <span class="keyword">new</span> <span class="title class_">SingletonSupplier</span>(defaultExecutor, () -&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.getDefaultExecutor(<span class="built_in">this</span>.beanFactory);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">this</span>.exceptionHandler = SingletonSupplier.of(SimpleAsyncUncaughtExceptionHandler::<span class="keyword">new</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AsyncExecutionAspectSupport</span><span class="params">(<span class="meta">@Nullable</span> Executor defaultExecutor, AsyncUncaughtExceptionHandler exceptionHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.defaultExecutor = <span class="keyword">new</span> <span class="title class_">SingletonSupplier</span>(defaultExecutor, () -&gt; &#123;</span><br><span class="line">            </span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 下面会有 对这个 方法的讲解!</span></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.getDefaultExecutor(<span class="built_in">this</span>.beanFactory);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">this</span>.exceptionHandler = SingletonSupplier.of(exceptionHandler);</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	目前 没看出来这个 的作用, 应该是 配置自己的 线程池, 以及异常处理器? </span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">configure</span><span class="params">(<span class="meta">@Nullable</span> Supplier&lt;Executor&gt; defaultExecutor, <span class="meta">@Nullable</span> Supplier&lt;AsyncUncaughtExceptionHandler&gt; exceptionHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.defaultExecutor = <span class="keyword">new</span> <span class="title class_">SingletonSupplier</span>(defaultExecutor, () -&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.getDefaultExecutor(<span class="built_in">this</span>.beanFactory);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">this</span>.exceptionHandler = <span class="keyword">new</span> <span class="title class_">SingletonSupplier</span>(exceptionHandler, SimpleAsyncUncaughtExceptionHandler::<span class="keyword">new</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">protected</span> AsyncTaskExecutor <span class="title function_">determineAsyncExecutor</span><span class="params">(Method method)</span> &#123;</span><br><span class="line">        <span class="type">AsyncTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> (AsyncTaskExecutor)<span class="built_in">this</span>.executors.get(method);</span><br><span class="line">        <span class="keyword">if</span> (executor == <span class="literal">null</span>) &#123;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 这个 方法就是 拿到 自己配置的那个线程池的 beanName, 就是 直接 去 该 method 拿到@Async上面的配置的 属性名称字符串(就是线程池)</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">qualifier</span> <span class="operator">=</span> <span class="built_in">this</span>.getExecutorQualifier(method);</span><br><span class="line">            Executor targetExecutor;</span><br><span class="line">            <span class="comment">// 如果 字符串 东西, 说明  是 自己配置了 线程池, 如果你配置了, 那么就用你的</span></span><br><span class="line">            <span class="keyword">if</span> (StringUtils.hasLength(qualifier)) &#123;</span><br><span class="line">                <span class="comment">//  然后 根据 beanName 直接 去 beanFactory 中 去 拿bean对象</span></span><br><span class="line">                targetExecutor = <span class="built_in">this</span>.findQualifiedExecutor(<span class="built_in">this</span>.beanFactory, qualifier);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 没有配置的话, 就是使用默认的 线程池 taskExecutor</span></span><br><span class="line">                <span class="comment">// 但是 这里有一种特殊的情况, 就是 如果 配置了线程池 比如 myExecutor, 但是并没有在 @Async 上面去指定</span></span><br><span class="line">                <span class="comment">// 那么下面的 get 得到的仍然 是 myExecutor, 意思是, 主要你配置了, 那就用你的, 不管你指不指定!</span></span><br><span class="line">                targetExecutor = (Executor)<span class="built_in">this</span>.defaultExecutor.get();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (targetExecutor == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">			<span class="comment">// 把 线程池 加入到 Map 中, (有没有缓存的作用,还有待商榷! )  并返回.</span></span><br><span class="line">            executor = targetExecutor <span class="keyword">instanceof</span> AsyncListenableTaskExecutor ? (AsyncListenableTaskExecutor)targetExecutor : <span class="keyword">new</span> <span class="title class_">TaskExecutorAdapter</span>(targetExecutor);</span><br><span class="line">            <span class="built_in">this</span>.executors.put(method, executor);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (AsyncTaskExecutor)executor;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    	<span class="comment">// 下面是  getDefaultExecutor 的代码实现 ,  非常的简单, 就是 根据 类对象, 去拿默认的 线程池</span></span><br><span class="line">    	 <span class="comment">// 为啥 不直接 根据 taskExecutor 直接去拿呢, 这里 还考虑  默认的线程池Bean 不只一个 (我服了!)</span></span><br><span class="line">        <span class="keyword">protected</span> Executor <span class="title function_">getDefaultExecutor</span><span class="params">(<span class="meta">@Nullable</span> BeanFactory beanFactory)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (beanFactory != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> (Executor)beanFactory.getBean(TaskExecutor.class);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (NoUniqueBeanDefinitionException var6) &#123;</span><br><span class="line">                <span class="built_in">this</span>.logger.debug(<span class="string">&quot;Could not find unique TaskExecutor bean&quot;</span>, var6);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> (Executor)beanFactory.getBean(<span class="string">&quot;taskExecutor&quot;</span>, Executor.class);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (NoSuchBeanDefinitionException var4) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (<span class="built_in">this</span>.logger.isInfoEnabled()) &#123;</span><br><span class="line">                        <span class="built_in">this</span>.logger.info(<span class="string">&quot;More than one TaskExecutor bean found within the context, and none is named &#x27;taskExecutor&#x27;. Mark one of them as primary or name it &#x27;taskExecutor&#x27; (possibly as an alias) in order to use it for async processing: &quot;</span> + var6.getBeanNamesFound());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (NoSuchBeanDefinitionException var7) &#123;</span><br><span class="line">                <span class="built_in">this</span>.logger.debug(<span class="string">&quot;Could not find default TaskExecutor bean&quot;</span>, var7);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> (Executor)beanFactory.getBean(<span class="string">&quot;taskExecutor&quot;</span>, Executor.class);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (NoSuchBeanDefinitionException var5) &#123;</span><br><span class="line">                    <span class="built_in">this</span>.logger.info(<span class="string">&quot;No task executor bean found for async processing: no bean of type TaskExecutor and no bean named &#x27;taskExecutor&#x27; either&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="异常的处理"><a href="#异常的处理" class="headerlink" title="异常的处理"></a>异常的处理</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SimpleAsyncUncaughtExceptionHandler </span><br><span class="line">    </span><br><span class="line">    也可以 重写 默认的 线程池进行改变, 如果 不重写, 那就使用上面的 这个  简单异步不捕获的异常处理器()</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h5 id="代理逻辑部分"><a href="#代理逻辑部分" class="headerlink" title="代理逻辑部分"></a>代理逻辑部分</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncExecutionInterceptor</span> <span class="keyword">extends</span> <span class="title class_">AsyncExecutionAspectSupport</span> <span class="keyword">implements</span> <span class="title class_">MethodInterceptor</span>, Ordered &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AsyncExecutionInterceptor</span><span class="params">(<span class="meta">@Nullable</span> Executor defaultExecutor)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(defaultExecutor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AsyncExecutionInterceptor</span><span class="params">(<span class="meta">@Nullable</span> Executor defaultExecutor, AsyncUncaughtExceptionHandler exceptionHandler)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(defaultExecutor, exceptionHandler);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="comment">// 经典的 aop  的 代理对象要执行的 invoke 方法</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(MethodInvocation invocation)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        Class&lt;?&gt; targetClass = invocation.getThis() != <span class="literal">null</span> ? AopUtils.getTargetClass(invocation.getThis()) : <span class="literal">null</span>;</span><br><span class="line">        <span class="type">Method</span> <span class="variable">specificMethod</span> <span class="operator">=</span> ClassUtils.getMostSpecificMethod(invocation.getMethod(), targetClass);</span><br><span class="line">        <span class="type">Method</span> <span class="variable">userDeclaredMethod</span> <span class="operator">=</span> BridgeMethodResolver.findBridgedMethod(specificMethod);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 拿到 线程池, 上面已经分析过了!</span></span><br><span class="line">        <span class="type">AsyncTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="built_in">this</span>.determineAsyncExecutor(userDeclaredMethod);</span><br><span class="line">        <span class="keyword">if</span> (executor == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalStateException</span>(<span class="string">&quot;No executor specified and no default executor set on AsyncExecutionInterceptor either&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 先封装 成一个 callable 任务, 相当于把 目标对象的 方法逻辑 ,封装成 了一个 callable 任务</span></span><br><span class="line">            Callable&lt;Object&gt; task = () -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> invocation.proceed();</span><br><span class="line">                    <span class="keyword">if</span> (result <span class="keyword">instanceof</span> Future) &#123;</span><br><span class="line">                        <span class="keyword">return</span> ((Future)result).get();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (ExecutionException var4) &#123;</span><br><span class="line">                    <span class="built_in">this</span>.handleError(var4.getCause(), userDeclaredMethod, invocation.getArguments());</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Throwable var5) &#123;</span><br><span class="line">                    <span class="built_in">this</span>.handleError(var5, userDeclaredMethod, invocation.getArguments());</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="comment">// 真正的去执行,  这里 调用的还是 上面源码的中的 do方法</span></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.doSubmit(task, executor, invocation.getMethod().getReturnType());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="怎么自己指定-特定的-线程池-配置-和-异常处理器"><a href="#怎么自己指定-特定的-线程池-配置-和-异常处理器" class="headerlink" title="怎么自己指定 特定的 线程池 配置 和 异常处理器"></a>怎么自己指定 特定的 线程池 配置 和 异常处理器</h5><p>1、修改@Async默认线程池</p>
+<p>关于修改 @Async默认的线程池 ，我们仅仅需要实现一个 AsyncConfigurer 类，进行**getAsyncExecutor 方法 **的重写即科</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@EnableAsync</span> <span class="comment">//对应的@Enable注解，最好写在属于自己的配置文件上，保持内聚性</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncConfig</span> <span class="keyword">implements</span> <span class="title class_">AsyncConfigurer</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">getAsyncExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        executor.setCorePoolSize(<span class="number">10</span>); <span class="comment">//核心线程数</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">20</span>);  <span class="comment">//最大线程数</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">1000</span>); <span class="comment">//队列大小</span></span><br><span class="line">        executor.setKeepAliveSeconds(<span class="number">300</span>); <span class="comment">//线程最大空闲时间</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;async-Executor-&quot;</span>); 指定用于新创建的线程名称的前缀。</span><br><span class="line">        executor.setRejectedExecutionHandler(<span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy()); <span class="comment">// 拒绝策略（一共四种，此处省略）</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这一步千万不能忘了，否则报错： java.lang.IllegalStateException: ThreadPoolTaskExecutor not initialized</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 异常处理器：当然你也可以自定义的，这里我就这么简单写了~~~</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> AsyncUncaughtExceptionHandler <span class="title function_">getAsyncUncaughtExceptionHandler</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">AsyncUncaughtExceptionHandler</span>() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleUncaughtException</span><span class="params">(Throwable arg0, Method arg1, Object... arg2)</span> &#123;</span><br><span class="line">                log.error(<span class="string">&quot;==========================&quot;</span>+arg0.getMessage()+<span class="string">&quot;=======================&quot;</span>, arg0);</span><br><span class="line">                log.error(<span class="string">&quot;exception method:&quot;</span>+arg1.getName());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<ol start="2">
+<li>自定义线程池</li>
+</ol>
+<p>我们可以自定义一个线程池，也是写一个配置类，在使用的时候，根据线程池的名称来使用具体的线程池</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExecutorConfiguration</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//    @Bean(&quot;myExecutor&quot;)</span></span><br><span class="line"><span class="comment">//    public Executor myExecutor() &#123;</span></span><br><span class="line"><span class="comment">//        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();</span></span><br><span class="line"><span class="comment">//        executor.setCorePoolSize(10);</span></span><br><span class="line"><span class="comment">//        executor.setMaxPoolSize(20);</span></span><br><span class="line"><span class="comment">//        executor.setQueueCapacity(100);</span></span><br><span class="line"><span class="comment">//        executor.setThreadNamePrefix(&quot;MyExecutor-&quot;);</span></span><br><span class="line"><span class="comment">//        executor.initialize();</span></span><br><span class="line"><span class="comment">//        return executor;</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(&quot;newExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">myTaskAsyncPool</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        <span class="comment">//核心线程池大小</span></span><br><span class="line">        executor.setCorePoolSize(<span class="number">5</span>);</span><br><span class="line">        <span class="comment">//最大线程数</span></span><br><span class="line">        executor.setMaxPoolSize(<span class="number">10</span>);</span><br><span class="line">        <span class="comment">//队列容量</span></span><br><span class="line">        executor.setQueueCapacity(<span class="number">2</span>);</span><br><span class="line">        <span class="comment">//活跃时间</span></span><br><span class="line"><span class="comment">//        executor.setKeepAliveSeconds();</span></span><br><span class="line">        <span class="comment">//线程名字前缀</span></span><br><span class="line">        executor.setThreadNamePrefix(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">        <span class="comment">// 拒绝策略</span></span><br><span class="line">        executor.setRejectedExecutionHandler(<span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy());</span><br><span class="line">        executor.initialize();</span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h5><p>使用@Async 的优点:  可以 在业务中使 <strong>异步</strong>变得简单!,</p>
+<p>缺点: <strong>屏蔽了太多底层线程池的配置细节</strong>, 如果使用者,对@Async 的原理不是很清晰的话, 可能会出现OOM 等一系列线上的问题</p>
+<p><strong>参考:</strong></p>
+<p>原理和使用:</p>
+<ul>
+<li>(<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1qu41187mK/?spm_id_from=333.788&vd_source=179da737184de5a8f84e4f6c2ee5c350">Spring中@Async注解让异步变的更简单，6分钟掌握@Async实现原理_哔哩哔哩_bilibili</a>)</li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/286068446">(13 封私信 &#x2F; 81 条消息) spring框架中的异步@Async和多线程有什么区别？ - 知乎 (zhihu.com)</a></li>
+</ul>
+<p>配置相关:</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/432259634">都在建议你不要直接使用 @Async 注解，为什么？ - 知乎 (zhihu.com)</a></p>
+<ul>
+<li>很清晰, 不过 是在 spring的 场景下,  而当前的项目是在 springboot 的场景下, </li>
+<li>但是大部分逻辑还是可以参考的</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42272869/article/details/123082657">SpringBoot关于@Async线程池配置_async配置线程池_pan_mlpan的博客-CSDN博客</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/05/24/spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC/" rel="next" title="spring的事件">
+                <i class="fa fa-chevron-left"></i> spring的事件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/05/25/Volatile/" rel="prev" title="Volatile关键字">
+                Volatile关键字 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#Async"><span class="nav-number">1.</span> <span class="nav-text">@Async</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Async%E6%B3%A8%E8%A7%A3%E9%83%A8%E5%88%86%E6%BA%90%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">@Async注解部分源码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">异常的处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E9%80%BB%E8%BE%91%E9%83%A8%E5%88%86"><span class="nav-number">4.</span> <span class="nav-text">代理逻辑部分</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E8%87%AA%E5%B7%B1%E6%8C%87%E5%AE%9A-%E7%89%B9%E5%AE%9A%E7%9A%84-%E7%BA%BF%E7%A8%8B%E6%B1%A0-%E9%85%8D%E7%BD%AE-%E5%92%8C-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">怎么自己指定 特定的 线程池 配置 和 异常处理器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2021 &mdash; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ego</span>
+
+  
+</div>
+
+
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/ego/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/ego/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

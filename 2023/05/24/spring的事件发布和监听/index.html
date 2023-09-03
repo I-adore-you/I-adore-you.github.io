@@ -84,11 +84,15 @@
 <meta property="og:site_name" content="Ego">
 <meta property="og:description" content="spring的事件发布于监听机制探寻">
 <meta property="og:locale">
+<meta property="og:image" content="http://example.com/spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC.assets/image-20230903104820880.png">
+<meta property="og:image" content="http://example.com/spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC.assets/image-20230903142048334.png">
+<meta property="og:image" content="http://example.com/spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC.assets/image-20230903114157893.png">
 <meta property="article:published_time" content="2023-05-23T16:00:00.000Z">
-<meta property="article:modified_time" content="2023-08-26T01:06:32.980Z">
+<meta property="article:modified_time" content="2023-09-03T06:20:54.077Z">
 <meta property="article:author" content="Ego">
 <meta property="article:tag" content="spring">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC.assets/image-20230903104820880.png">
 
 
 
@@ -322,7 +326,64 @@
       
 
       
-        
+        <h2 id="Spring-的事件发布与监听"><a href="#Spring-的事件发布与监听" class="headerlink" title="Spring 的事件发布与监听"></a>Spring 的事件发布与监听</h2><h4 id="整个流程"><a href="#整个流程" class="headerlink" title="整个流程"></a>整个流程</h4><p><img src="/../spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC.assets/image-20230903104820880.png" alt="image-20230903104820880"></p>
+<p>平时开发中会发现Spring提供了一系列的工具满足我们的业务场景，其中有一项是提供了事件的发布和订阅。</p>
+<p>事件的发布主要是依靠<code>ApplicationEventPublisher</code>来进行的。</p>
+<p>要想实现事件发布主要需要下面几个对象：任务、事件、事件监听。</p>
+<h5 id="事件发布的方式"><a href="#事件发布的方式" class="headerlink" title="事件发布的方式"></a>事件发布的方式</h5><blockquote>
+<p> 本质上 都是通过  ApplicationEventPublisher 来实现</p>
+<p>因为 ApplicationContext  实现了 ApplicationEventPublisher  接口</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span> </span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PublishService</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ApplicationEventPublisher eventPublisher;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ApplicationContext applicationContext;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">testPublish</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;ego&quot;</span>, <span class="number">20</span>);</span><br><span class="line">        log.info(<span class="string">&quot;&#123;&#125;&quot;</span>, eventPublisher == applicationContext);</span><br><span class="line">        eventPublisher.publishEvent(<span class="keyword">new</span> <span class="title class_">MyEvent</span>(user));</span><br><span class="line">        <span class="type">OtherEvent</span> <span class="variable">otherEvent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OtherEvent</span>(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;zhang&quot;</span>,<span class="number">22</span>));</span><br><span class="line">        eventPublisher.publishEvent(otherEvent);</span><br><span class="line">        log.info(<span class="string">&quot;测试， 发布事件的地方会不会阻塞！&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     测试 监听器 对于 不同事件Event 的 过滤</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">testPublish3</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">OtherEvent</span> <span class="variable">otherEvent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OtherEvent</span>(<span class="keyword">new</span> <span class="title class_">User</span>(<span class="string">&quot;zhang&quot;</span>,<span class="number">22</span>));</span><br><span class="line">        applicationContext.publishEvent(otherEvent);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h5 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h5><p>任务就是一个普通的类，用来保存你要发布事件的内容。这个没有特殊限制，可以根据自己业务随意设置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Task</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String taskName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String taskContext;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> finish;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="事件类"><a href="#事件类" class="headerlink" title="事件类"></a>事件类</h5><p>事件类需要继承<code>org.springframework.context.ApplicationEvent</code>，这样发布的事件才能被Spring所识别</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyEvent</span> <span class="keyword">extends</span> <span class="title class_">ApplicationEvent</span> &#123;</span><br><span class="line"></span><br><span class="line">    String userId;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyEvent</span><span class="params">(Object source)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(source);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h5 id="监听"><a href="#监听" class="headerlink" title="监听"></a>监听</h5><p>使用  @EventListener 注解, 而且需要将当前类声明成 spring的bean对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ListenerEvent</span> &#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     这里 使用 EventListener 注解的方式来做</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//    @EventListener(classes = &#123;MyEvent.class, OtherEvent.class&#125;)</span></span><br><span class="line"><span class="comment">//    @Async</span></span><br><span class="line"><span class="comment">//    public void listen(MyEvent myEvent) throws InterruptedException &#123;</span></span><br><span class="line"><span class="comment">//        User source = (User) myEvent.getSource(); // 我肯定知道是  user 类型的</span></span><br><span class="line"><span class="comment">//        log.info(&quot;begin&quot;);</span></span><br><span class="line"><span class="comment">//        TimeUnit.SECONDS.sleep(2);</span></span><br><span class="line"><span class="comment">//        log.info(&quot;&#123;&#125;    end&quot;,source);</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line">    <span class="meta">@EventListener(classes = &#123;MyEvent.class, OtherEvent.class&#125;)</span></span><br><span class="line"><span class="comment">//    @Async(&quot;myExecutor&quot;)</span></span><br><span class="line"><span class="comment">//    @Async(&quot;newExecutor&quot;)</span></span><br><span class="line">    <span class="meta">@Async()</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">listen</span><span class="params">(ApplicationEvent event)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">source</span> <span class="operator">=</span> event.getSource();</span><br><span class="line">        log.info(<span class="string">&quot;begin&quot;</span>);</span><br><span class="line">        TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">        System.out.println(<span class="number">1</span> / <span class="number">0</span>);</span><br><span class="line">        log.info(<span class="string">&quot;&#123;&#125;    end&quot;</span>,source);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在Spring中，当创建某个Bean对象时，Spring会检查该Bean类是否存在使用了 <code>@EventListener</code> 注解的方法。如果存在这样的方法，Spring会将该Bean对象标记为事件监听器，以便在事件发布时能够找到并调用相应的监听器方法。</p>
+<p>具体流程如下：</p>
+<ol>
+<li><p>Spring容器在初始化时，会扫描所有的Bean对象。</p>
+</li>
+<li><p>当创建某个Bean对象时，Spring会检查该Bean类是否存在使用了 <code>@EventListener</code> 注解的方法。</p>
+</li>
+<li><p>如果存在使用了 <code>@EventListener</code> 注解的方法，Spring会将该Bean对象标记为事件监听器，并将其注册到事件监听器列表中。</p>
+</li>
+<li><p>当使用 <code>ApplicationEventPublisher</code> 发布事件时，Spring会遍历已注册的事件监听器列表，找到与发布事件类型匹配的监听器。</p>
+</li>
+<li><p>如果找到匹配的监听器，Spring会调用该监听器方法，并将事件作为参数传递给监听器方法。</p>
+</li>
+</ol>
+<p>所以，使用 <code>@EventListener</code> 注解的方法会被Spring自动识别为事件监听器，并且无需手动将Bean对象标记为监听器。这种机制使得事件的发布和监听变得更加简单和自动化。</p>
+<h5 id="使用到的设计模式"><a href="#使用到的设计模式" class="headerlink" title="使用到的设计模式"></a>使用到的设计模式</h5><blockquote>
+<p> 观察者模式</p>
+</blockquote>
+<p><img src="/../spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC.assets/image-20230903142048334.png" alt="image-20230903142048334"></p>
+<h5 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h5><p><img src="/../spring%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E5%92%8C%E7%9B%91%E5%90%AC.assets/image-20230903114157893.png" alt="image-20230903114157893"></p>
+
       
     </div>
     
@@ -352,8 +413,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2023/04/29/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" rel="next" title="分布式锁锁">
-                <i class="fa fa-chevron-left"></i> 分布式锁锁
+              <a href="/2023/05/15/%E7%AE%97%E6%B3%95/" rel="next" title="算法与数据结构">
+                <i class="fa fa-chevron-left"></i> 算法与数据结构
               </a>
             
           </div>
@@ -362,8 +423,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2023/05/25/Volatile/" rel="prev" title="Volatile关键字">
-                Volatile关键字 <i class="fa fa-chevron-right"></i>
+              <a href="/2023/05/25/spring@Async%E6%B3%A8%E8%A7%A3/" rel="prev" title="Async注解">
+                Async注解 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -416,8 +477,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -432,7 +502,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -468,6 +538,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E7%9A%84%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E4%B8%8E%E7%9B%91%E5%90%AC"><span class="nav-number">1.</span> <span class="nav-text">Spring 的事件发布与监听</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E4%B8%AA%E6%B5%81%E7%A8%8B"><span class="nav-number">1.0.1.</span> <span class="nav-text">整个流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%8F%91%E5%B8%83%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">事件发布的方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">任务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E7%B1%BB"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">事件类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%9B%91%E5%90%AC"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">监听</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%88%B0%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">使用到的设计模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">原理</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
